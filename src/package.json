@@ -34,14 +34,15 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:client": "webpack --config build/webpack.client.config.js",
-    "build:server": "babel src_server -s -D -d dist",
-    "dev:client": "webpack-dev-server --config build/webpack.client.config.js",
-    "dev:server": "nodemon -w src_server --exec \"babel-node src_server\"",
+    "build:client": "webpack --config client/webpack.config.js",
+    "build:server": "babel server -s -D -d dist",
+    "dev:client": "webpack-dev-server --config client/webpack.config.js",
+    "dev:server": "nodemon -w server --exec \"babel-node server\"",
     "build": "npm run build:client && npm run build:server",
     "start": "node dist"
   },
-  "name": "my_lhu",
+  "main": "dist/index.js",
+  "name": "mylhu",
   "version": "1.0.0",
   "author": "Hans Zhang",
   "private": true

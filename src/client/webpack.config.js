@@ -5,8 +5,8 @@ var config = {
     entry: [
         'webpack/hot/dev-server',
         'whatwg-fetch',
-        path.resolve(__dirname, '../src_client/main.js'),
-        path.resolve(__dirname, '../src_client/auth.js')
+        path.resolve(__dirname, 'main.js'),
+        path.resolve(__dirname, 'auth.js')
     ],
     output: {
         filename: 'assets/bundle.js'
