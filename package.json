@@ -1,0 +1,48 @@
+{
+  "license": "Apache-2.0",
+  "description": "MyLHU for students.",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cheerio": "^0.22.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "request": "^2.79.0",
+    "store": "^1.3.20",
+    "tough-cookie": "^2.3.2",
+    "tough-cookie-filestore": "0.0.1",
+    "vue": "^2.1.4",
+    "vue-router": "^2.1.1",
+    "vue-strap": "^1.1.34",
+    "whatwg-fetch": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.16.0",
+    "css-loader": "^0.25.0",
+    "file-loader": "^0.9.0",
+    "nodemon": "^1.11.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "vue-hot-reload-api": "^2.0.6",
+    "vue-loader": "^9.5.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1",
+    "webpack-merge": "^0.14.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:client": "webpack --config build/webpack.client.config.js",
+    "build:server": "babel src_server -s -D -d dist",
+    "dev:client": "webpack-dev-server --config build/webpack.client.config.js",
+    "dev:server": "nodemon -w src_server --exec \"babel-node src_server\"",
+    "build": "npm run build:client && npm run build:server",
+    "start": "node dist"
+  },
+  "name": "my_lhu",
+  "version": "1.0.0",
+  "author": "Hans Zhang",
+  "private": true
+}
