@@ -1,12 +1,13 @@
-FROM node:alpine
+FROM node:argon
 
-RUN mkdir /app
-ADD . /app
+MAINTAINER "Hans Zhang <d1044182013@gm.lhu.edu.tw>"
+
 WORKDIR /app
+
+ADD . /app
+
 RUN npm install && \
-    npm run build && \
-    rm -Rf src
+    npm run build
 
 EXPOSE 8080
-
-ENTRYPOINT ["npm", "run", "start"]
+CMD ["npm", "run", "start"]
