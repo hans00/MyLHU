@@ -1,4 +1,3 @@
-import http from 'http'
 import express from 'express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
@@ -33,8 +32,8 @@ app.all('/', (req, res, next) => {
 app.use(express.static('assets'))
 app.use('/api', api(urls))
 
-app.server = http.createServer(app)
-app.server.listen(process.env.PORT || 8080)
-console.log(`Started on port ${app.server.address().port}`)
+app.listen(3000, function () {
+    console.log('Example app listening on port 3000!');
+})
 
 export default app
