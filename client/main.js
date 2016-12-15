@@ -2,22 +2,31 @@ import Vue from 'vue'
 import router from './router'
 import auth from './auth'
 
-auth.check()
-
 const app = new Vue({
     data ()  {
-        return { user: auth.user }
+        return { user: auth.user, checking: true }
     },
     methods: {
         logout () {
-            auth.logout()
-            this.logged = false
-            location.reload()
+            this.checking = false
+            auth.logout((status) => {
+                location = '#'
+            })
         }
     },
     mounted () {
+        auth.check((status) => {
+            this.$root.checking = false
+            if (!status) {
+                $('#error').focus()
+            }
+        })
         this.handle = setInterval(() => {
-            auth.check()
+            console.log(this)
+            auth.check((status) => {
+                this.$root.checking = false
+                console.log(this)
+            })
         }, 30000)
     },
     destroyed () {

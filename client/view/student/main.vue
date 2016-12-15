@@ -23,7 +23,25 @@ export default {
         return { user: auth.user }
     },
     mounted () {
-        auth.student()
+        if (auth.user.logged) {
+            if (!auth.user.student) {
+                this.$root.checking = true
+            }
+            auth.student((status) => {
+                this.$root.checking = false
+                if (status && !auth.user.student) {
+                    this.$root.checking = true
+                    auth.student_login((status) => {
+                        this.$root.checking = false
+                        if (!status) {
+                            $('#error').focus()
+                        }
+                    })
+                } else {
+                    $('#error').focus()
+                }
+            })
+        }
     }
 }
 </script>

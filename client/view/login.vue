@@ -46,16 +46,12 @@ export default {
                 return
             }
             auth.login(this.account, this.password, this.captcha, (ok) => {
-                if (status) {
-                    if (auth.user.logged) {
-                        window.location = "#"
-                    } else {
-                        alert("資訊有誤，請重新輸入")
-                        this.account = this.password = this.captcha = ""
-                        this.refresh()
-                    }
+                if (ok) {
+                    window.location = "#"
                 } else {
-                    $('#error').focus()
+                    alert("資訊有誤，請重新輸入")
+                    this.account = this.password = this.captcha = ""
+                    this.refresh()
                 }
             })
         },

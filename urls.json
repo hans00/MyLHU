@@ -11,7 +11,8 @@
         "check" : "http://www.lhu.edu.tw/StudAp/LoginMsg.aspx",
         "login" : "http://www.lhu.edu.tw/StudAp/LoginLDAPs.aspx",
         "labor" : {
-            "list" : "http://www.lhu.edu.tw/StudAp/C00/C4001/Apply/Labor_Apply.aspx"
+            "list" : "http://www.lhu.edu.tw/StudAp/C00/C4001/Apply/Labor_Apply.aspx",
+            "get"  : "http://www.lhu.edu.tw/StudAp/C00/C4001/Apply/"
         },
         "inquire" : {
             "teaching" : "http://www.lhu.edu.tw/NStudAp/B00/B2001/Inquire/Inquire.aspx",

@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Main from './pages/main.vue'
-import About from './pages/about.vue'
-import Login from './pages/login.vue'
-import Logout from './pages/main.vue'
-import Student from './pages/student/main.vue'
-import Labor from './pages/student/labor.vue'
-import Course from './pages/course.vue'
+import Main from './view/main.vue'
+import About from './view/about.vue'
+import Login from './view/login.vue'
+import Logout from './view/main.vue'
+import Student from './view/student/main.vue'
+import Labor from './view/student/labor.vue'
+import Course from './view/course.vue'
 
 Vue.use(VueRouter)
 
