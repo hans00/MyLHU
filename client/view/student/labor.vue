@@ -23,8 +23,18 @@
                 </div>
             </div>
         </form>
-        <ul class="list-group" style="float:left"></ul>
-        <ul class="list-group" style="float:right"></ul>
+        <ul class="list-group" style="float:left">
+            <li class="list-group-item list-group-item-warning">尚未報名</li>
+            <li v-for="name in is_got(list, false)" class="list-group-item">
+                {{ name }}
+            </li>
+        </ul>
+        <ul class="list-group" style="float:right">
+            <li class="list-group-item list-group-item-success">已報名</li>
+            <li v-for="name in is_got(list, true)" class="list-group-item">
+                {{ name }}
+            </li>
+        </ul>
     </div>
     <div v-else>
         <h1>歡迎使用 My LHU</h1>
@@ -39,7 +49,7 @@
 import auth from '../../auth'
 export default {
     data ()  {
-        return { user: auth.user, start: false, interval: 1 }
+        return { user: auth.user, start: false, interval: 1, list:{} }
     },
     methods: {
         toogle () {
@@ -49,15 +59,75 @@ export default {
             if (this.handle) {
                 clearInterval(this.handle)
             }
-            this.handle = setInterval(this.getLabor, this.interval * 1000)
+            this.handle = setInterval(this.sync, this.interval * 1000)
         },
-        getLabor () {
-            console.log(this.start)
+        sync () {
+            this.getList()
+            if (this.list.length > 0) {
+                this.scanLabor()
+            }
+        },
+        getList () {
+            fetch('/api/student/labor/list', { credentials: 'same-origin' })
+            .then((response) => { return response.json() })
+            .then((json) => {
+                if (json.status != "success") {
+                    for (var id in json.list) {
+                        if (!this.list[id]) {
+                            this.list[id] = {
+                                name: json.list[id]
+                            }
+                        }
+                    }
+                }
+            })
+        },
+        scanLabor () {
+            for (var id in this.list) {
+                if (!this.list[id].got) {
+                    this.getLabor(id)
+                }
+            }
+        },
+        getLabor (id) {
+            fetch('/api/student/labor/get', {
+                credentials: 'same-origin',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            })
+            .then((response) => { return response.json() })
+            .then((json) => {
+                if (json.status == "success" && json.result == "success") {
+                    switch (json.result) {
+                        case "available":
+                            this.getLabor(id)
+                            break
+                        case "success":
+                            this.list[id].got = true
+                            break
+                        case "fulled":
+                            this.list[id].got = false
+                            break
+                    }
+                }
+            })
+        },
+        is_got (list, check) {
+            var temp = []
+            for (data of list) {
+                if (data.got == check) {
+                    temp[temp.length] = data.name
+                }
+            }
+            return temp
         }
     },
     mounted () {
-        auth.student()
-        this.setup()
+        if (auth.user.logged) {
+            auth.student()
+            this.setup()
+        }
     },
     destroyed () {
         clearInterval(this.handle)

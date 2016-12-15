@@ -20,6 +20,13 @@ export default (urls) => {
 				req.session.labor = {}
 			}
 			var $ = cheerio.load(body)
+			if ($("*:contains('皆已通過')'").length > 0) {
+				res.json({
+					status: 'success',
+					list: {}
+				})
+				return
+			}
 			var table = $("#DG_Content")
             if (table.find("tr").length > 0) {
                 table.find("tr:not(:eq(0))").each(() => {
@@ -43,10 +50,7 @@ export default (urls) => {
 					list: {}
 				}
 				for (var id in req.session.labor) {
-					output.list[id] = {
-						name: req.session.labor[id].name,
-						got: req.session.labor[id].got
-					}
+					output.list[id] = req.session.labor[id].name
 				}
 				res.json(output)
             } else {
@@ -93,19 +97,19 @@ export default (urls) => {
 						status: 'success',
 						result: 'success'
 					})
-					break;
+					break
 				case "活動人數額滿":
 					res.json({
 						status: 'success',
 						result: 'fulled'
 					})
-					break;
+					break
 				case "報名參加此活動":
 					res.json({
 						status: 'success',
 						result: 'available'
 					})
-					break;
+					break
 			}
 		})
 		.on('error', (err) => {
