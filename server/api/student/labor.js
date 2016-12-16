@@ -20,7 +20,7 @@ export default (urls) => {
 				req.session.labor = {}
 			}
 			var $ = cheerio.load(body)
-			if ($("*:contains('皆已通過')'").length > 0) {
+			if ($("*:contains('皆已通過')").length > 0) {
 				res.json({
 					status: 'success',
 					list: {}

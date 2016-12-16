@@ -8,12 +8,10 @@
         <form class="form-inline">
             <div class="form-group">
                 <label for="start" class="sr-only control-label">啟動</label>
-                <div class="input-group">
-                    <label class="toggle">
-			            <input type="checkbox" >
-			            <span class="handle" @click="toogle"></span>
-			        </label>
-                </div>
+                <label class="toggle">
+		            <input type="checkbox">
+			        <span class="handle" @click="toogle"></span>
+			    </label>
             </div>
             <div class="form-group">
                 <label for="intervl" class="sr-only control-label">間格</label>
@@ -23,18 +21,22 @@
                 </div>
             </div>
         </form>
-        <ul class="list-group" style="float:left">
-            <li class="list-group-item list-group-item-warning">尚未報名</li>
-            <li v-for="name in is_got(list, false)" class="list-group-item">
-                {{ name }}
-            </li>
-        </ul>
-        <ul class="list-group" style="float:right">
-            <li class="list-group-item list-group-item-success">已報名</li>
-            <li v-for="name in is_got(list, true)" class="list-group-item">
-                {{ name }}
-            </li>
-        </ul>
+        <div class="col-lg-6">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-warning active" style="color: white">尚未報名</li>
+                <li v-for="name in is_got(false)" class="list-group-item">
+                    {{ name }}
+                </li>
+            </ul>
+        </div>
+        <div class="col-lg-6">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-success" style="color: white">已報名</li>
+                <li v-for="name in is_got(true)" class="list-group-item">
+                    {{ name }}
+                </li>
+            </ul>
+        </div>
     </div>
     <div v-else>
         <h1>歡迎使用 My LHU</h1>
@@ -55,7 +57,11 @@ export default {
             interval: 1,
             list: {
                 test: {
-                    name: 測試,
+                    name: "測試",
+                    got: true
+                },
+                test2: {
+                    name: "測試2",
                     got: false
                 }
             }
@@ -72,13 +78,15 @@ export default {
             this.handle = setInterval(this.sync, this.interval * 1000)
         },
         sync () {
-            this.getList()
-            if (this.list.length > 0) {
-                this.scanLabor()
+            if (this.start) {
+                this.getList()
+                if (this.list.length > 0) {
+                    this.scanLabor()
+                }
             }
         },
         getList () {
-            fetch('/api/student/labor/list', { credentials: 'same-origin' })
+            fetch('/api/student/labor/list?' + (new Date()).getTime(), { credentials: 'same-origin' })
             .then((response) => { return response.json() })
             .then((json) => {
                 if (json.status != "success") {
@@ -100,7 +108,7 @@ export default {
             }
         },
         getLabor (id) {
-            fetch('/api/student/labor/get', {
+            fetch('/api/student/labor/get?' + (new Date()).getTime(), {
                 credentials: 'same-origin',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -123,21 +131,19 @@ export default {
                 }
             })
         },
-        is_got (list, check) {
+        is_got (check) {
             var temp = []
-            for (data of list) {
-                if (data.got == check) {
-                    temp[temp.length] = data.name
+            for (var id in this.list) {
+                if (this.list[id].got == check) {
+                    temp[temp.length] = this.list[id].name
                 }
             }
             return temp
         }
     },
     mounted () {
-        if (auth.user.logged) {
-            auth.student()
-            this.setup()
-        }
+        auth.student()
+        this.setup()
     },
     destroyed () {
         clearInterval(this.handle)

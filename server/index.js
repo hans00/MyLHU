@@ -22,9 +22,8 @@ app.use( session({
     })
 )
 
-app.all('/', (req, res, next) => {
-    var sess = req.session
-    //console.log(req.sessionStore)
+app.use((req, res, next) => {
+    console.log(req.originalUrl)
     console.log(req.sessionID)
     next()
 })
