@@ -49,7 +49,17 @@
 import auth from '../../auth'
 export default {
     data ()  {
-        return { user: auth.user, start: false, interval: 1, list:{} }
+        return {
+            user: auth.user,
+            start: false,
+            interval: 1,
+            list: {
+                test: {
+                    name: 測試,
+                    got: false
+                }
+            }
+        }
     },
     methods: {
         toogle () {
