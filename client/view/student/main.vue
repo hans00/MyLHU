@@ -34,11 +34,13 @@ export default {
                     auth.student_login((status) => {
                         this.$root.checking = false
                         if (!status) {
-                            $('#error').focus()
+                            $('#error').modal('show')
+                            $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
                         }
                     })
                 } else {
-                    $('#error').focus()
+                    $('#error').modal('show')
+                    $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
                 }
             })
         }

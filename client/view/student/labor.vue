@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label for="intervl" class="sr-only control-label">間格</label>
                 <div class="input-group">
-                    <input type="number" id="intervl" class="form-control" v-model="interval" @change="setup" min="0.8" step="0.1">
+                    <input type="number" id="intervl" class="form-control" v-model="interval" @change="setup" min="0.5" step="0.1">
                     <div class="input-group-addon">秒</div>
                 </div>
             </div>
@@ -24,7 +24,7 @@
         <div class="col-lg-6">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-warning active" style="color: white">尚未報名</li>
-                <li v-for="name in is_got(false)" class="list-group-item">
+                <li v-if="is_got(false).length > 0" v-for="name in is_got(false)" class="list-group-item">
                     {{ name }}
                 </li>
             </ul>
@@ -55,16 +55,7 @@ export default {
             user: auth.user,
             start: false,
             interval: 1,
-            list: {
-                test: {
-                    name: "測試",
-                    got: true
-                },
-                test2: {
-                    name: "測試2",
-                    got: false
-                }
-            }
+            list: {}
         }
     },
     methods: {
@@ -138,7 +129,11 @@ export default {
                     temp[temp.length] = this.list[id].name
                 }
             }
-            return temp
+            if (temp.length > 0) {
+                return temp
+            } else {
+                return ["何でもない…"]
+            }
         }
     },
     mounted () {

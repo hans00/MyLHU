@@ -45,13 +45,21 @@ export default {
             if (!this.account || !this.password || !this.captcha) {
                 return
             }
-            auth.login(this.account, this.password, this.captcha, (ok) => {
-                if (ok) {
-                    window.location = "#"
+            this.$root.checking = true
+            auth.login(this.account, this.password, this.captcha, (status) => {
+                this.$root.checking = false
+                if (status) {
+                    if (auth.user.logged) {
+                        window.location = "#"
+                    } else {
+                        this.account = this.password = this.captcha = ""
+                        this.captchaImg = '/api/login/image?' + (new Date()).getTime()
+                        $('#error').modal('show')
+                        $('#err_msg').text("輸入的資料有誤，請再檢查。")
+                    }
                 } else {
-                    alert("資訊有誤，請重新輸入")
-                    this.account = this.password = this.captcha = ""
-                    this.refresh()
+                    $('#error').modal('show')
+                    $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
                 }
             })
         },

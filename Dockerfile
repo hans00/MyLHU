@@ -1,4 +1,4 @@
-FROM node:argon
+FROM node:alpine
 
 MAINTAINER "Hans Zhang <d1044182013@gm.lhu.edu.tw>"
 

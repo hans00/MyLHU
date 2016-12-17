@@ -8,8 +8,9 @@ const app = new Vue({
     },
     methods: {
         logout () {
-            this.checking = false
+            this.checking = true
             auth.logout((status) => {
+                this.$root.checking = false
                 location = '#'
             })
         }
@@ -18,19 +19,20 @@ const app = new Vue({
         auth.check((status) => {
             this.$root.checking = false
             if (!status) {
-                $('#error').focus()
+                $('#error').modal('show')
+                $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
+            }
+            if (auth.user.logged) {
+                this.handle = setInterval(() => {
+                    auth.check()
+                }, 30000)
             }
         })
-        this.handle = setInterval(() => {
-            console.log(this)
-            auth.check((status) => {
-                this.$root.checking = false
-                console.log(this)
-            })
-        }, 30000)
     },
     destroyed () {
-        clearInterval(this.handle)
+        if (this.handle) {
+            clearInterval(this.handle)
+        }
     },
     router
 }).$mount('#app')

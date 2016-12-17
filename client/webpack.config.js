@@ -5,6 +5,7 @@ var config = {
     entry: [
         'webpack/hot/dev-server',
         'whatwg-fetch',
+        'bootstrap',
         path.resolve(__dirname, 'main.js'),
         path.resolve(__dirname, 'auth.js')
     ],
