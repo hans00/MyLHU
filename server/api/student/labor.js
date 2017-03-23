@@ -2,6 +2,7 @@ import { Router } from 'express'
 import cheerio from 'cheerio'
 import cookieJar from '../../lib/cookieJar'
 import request from 'request'
+import md5 from 'md5'
 
 export default (urls) => {
 	let labor = Router()
@@ -28,23 +29,23 @@ export default (urls) => {
 				return
 			}
 			var table = $("#DG_Content")
-            if (table.find("tr").length > 0) {
-                table.find("tr:not(:eq(0))").each(() => {
-                    var log = {
-							url: urls.student.labor.get + $(this).find("td:first-child a").attr("href"),
-                        	name: $(this).find("td:nth-child(2) font").text()
-						}, id = md5(_name)
-                    if (log.name.includes("限")) return
-                    if (!(id in req.session.labor)) {
-                        req.session.labor[id] = {
-                            url: urls.student.labor.get + url.split("/").pop(),
-                            name: name,
-                            count: 0,
+			if (table.find("tr").length > 0) {
+				table.find("tr").each((i, elem) => {
+					if (i == 0) return
+					var _name = elem.children[2].children[0].children[0].data
+					var _url  = elem.children[1].children[0].children[0].attribs.href
+					var id    = md5(_name)
+					if (!_name.includes("限"))
+					if (!(id in req.session.labor)) {
+						req.session.labor[id] = {
+							url: urls.student.labor.get + _url.split("/").pop(),
+							name: _name,
+							count: 0,
 							post: {},
 							got: false
-                        }
-                    }
-                })
+						}
+					}
+				})
 				var output = {
 					status: 'success',
 					list: {}
@@ -53,8 +54,8 @@ export default (urls) => {
 					output.list[id] = req.session.labor[id].name
 				}
 				res.json(output)
-            } else {
-                res.json({
+			} else {
+				res.json({
 					status: 'success',
 					list: {}
 				})
@@ -64,7 +65,7 @@ export default (urls) => {
 			res.json({
 				status: 'faild'
 			})
-	  	})
+		})
 	})
 
 	labor.post('/get', (req, res) => {

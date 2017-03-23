@@ -46,8 +46,8 @@ export default (urls) => {
 		.on('response', () => cookie.save())
 		.on('data', (data) => body += data)
 		.on('end', () => {
-			var body = ""
 			var $ = cheerio.load(body)
+			var body2 = ""
 			request.post({
 					url: urls.student.login,
 					jar: cookie.jar,
@@ -58,9 +58,9 @@ export default (urls) => {
 					}
 				})
 			.on('response', () => cookie.save())
-			.on('data', (data) => body += data)
+			.on('data', (data) => body2 += data)
 			.on('end', () => {
-				var $ = cheerio.load(body)
+				var $ = cheerio.load(body2)
 				if ($("*:contains('錯誤')").length > 0) {
 					res.json({
 						status: 'success',

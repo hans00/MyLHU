@@ -24,7 +24,7 @@
         <div class="col-lg-6">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-warning active" style="color: white">尚未報名</li>
-                <li v-if="is_got(false).length > 0" v-for="name in is_got(false)" class="list-group-item">
+                <li v-for="name in faild_list" class="list-group-item">
                     {{ name }}
                 </li>
             </ul>
@@ -32,7 +32,7 @@
         <div class="col-lg-6">
             <ul class="list-group">
                 <li class="list-group-item list-group-item-success" style="color: white">已報名</li>
-                <li v-for="name in is_got(true)" class="list-group-item">
+                <li v-for="name in succ_list" class="list-group-item">
                     {{ name }}
                 </li>
             </ul>
@@ -55,7 +55,9 @@ export default {
             user: auth.user,
             start: false,
             interval: 1,
-            list: {}
+            list: {},
+            succ_list: ["何でもない…"],
+            faild_list: ["何でもない…"]
         }
     },
     methods: {
@@ -71,7 +73,9 @@ export default {
         sync () {
             if (this.start) {
                 this.getList()
-                if (this.list.length > 0) {
+                this.display_faild()
+                this.display_succ()
+                if (Object.keys(this.list).length > 0) {
                     this.scanLabor()
                 }
             }
@@ -80,11 +84,13 @@ export default {
             fetch('/api/student/labor/list?' + (new Date()).getTime(), { credentials: 'same-origin' })
             .then((response) => { return response.json() })
             .then((json) => {
-                if (json.status != "success") {
+                if (json.status == "success") {
                     for (var id in json.list) {
-                        if (!this.list[id]) {
+                        if (!(id in this.list)) {
                             this.list[id] = {
-                                name: json.list[id]
+                                name: json.list[id],
+                                got: false,
+                                running: false
                             }
                         }
                     }
@@ -93,7 +99,8 @@ export default {
         },
         scanLabor () {
             for (var id in this.list) {
-                if (!this.list[id].got) {
+                if (!this.list[id].got && !this.list[id].running) {
+                    this.list[id].running = true
                     this.getLabor(id)
                 }
             }
@@ -120,19 +127,33 @@ export default {
                             break
                     }
                 }
+                this.list[id].running = false
             })
         },
-        is_got (check) {
+        display_faild () {
             var temp = []
             for (var id in this.list) {
-                if (this.list[id].got == check) {
+                if (this.list[id].got == false) {
                     temp[temp.length] = this.list[id].name
                 }
             }
             if (temp.length > 0) {
-                return temp
+                this.faild_list = temp
             } else {
-                return ["何でもない…"]
+                this.faild_list = ["何でもない…"]
+            }
+        },
+        display_succ () {
+            var temp = []
+            for (var id in this.list) {
+                if (this.list[id].got == true) {
+                    temp[temp.length] = this.list[id].name
+                }
+            }
+            if (temp.length > 0) {
+                this.succ_list = temp
+            } else {
+                this.succ_list = ["何でもない…"]
             }
         }
     },

@@ -15,9 +15,9 @@ export default {
                 if (json.logged) {
                     user.student = true
                 }
-                cb(true)
+                if (typeof cb === "function") cb(true)
             } else {
-                cb(false)
+                if (typeof cb === "function") cb(false)
             }
         })
     },
@@ -28,10 +28,10 @@ export default {
         .then((json) => {
             if (json.status == "success") {
                 user.student = json.logged
-                cb(true)
+                if (typeof cb === "function") cb(true)
             } else {
                 user.student = false
-                cb(false)
+                if (typeof cb === "function") cb(false)
             }
         })
     },
@@ -43,9 +43,9 @@ export default {
         }).then(function(json) {
             if (json.status == "success") {
                 user.logged = json.logged
-                cb(true)
+                if (typeof cb === "function") cb(true)
             } else {
-                cb(false)
+                if (typeof cb === "function") cb(false)
             }
         })
     },
@@ -67,9 +67,9 @@ export default {
         }).then(function(json) {
             if (json.status == "success") {
                 user.logged = json.logged
-                cb(true)
+                if (typeof cb === "function") cb(true)
             } else {
-                cb(false)
+                if (typeof cb === "function") cb(false)
             }
         })
     },
@@ -83,9 +83,9 @@ export default {
                 user.logged = false
                 user.student = false
                 user.course = false
-                cb(true)
+                if (typeof cb === "function") cb(true)
             } else {
-                cb(false)
+                if (typeof cb === "function") cb(false)
             }
         })
     }
