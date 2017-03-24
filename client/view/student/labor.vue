@@ -2,7 +2,8 @@
     <div v-if="user.student">
         <h1>歡迎使用 My LHU</h1>
         <p class="lead">
-            搶勞作！！！
+            搶勞作！！！<br>
+            目前功能僅無差別搶勞作（不搶限xx系專用勞作），若需取消報名請回到學生資訊系統操作。
         </p>
         <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <form class="form-inline">
@@ -73,11 +74,14 @@ export default {
         sync () {
             if (this.start) {
                 this.getList()
+                for (var id in this.list) {
+                    if (!this.list[id].got && !this.list[id].running) {
+                        this.list[id].running = true
+                        this.getLabor(id)
+                    }
+                }
                 this.display_faild()
                 this.display_succ()
-                if (Object.keys(this.list).length > 0) {
-                    this.scanLabor()
-                }
             }
         },
         getList () {
@@ -96,14 +100,6 @@ export default {
                     }
                 }
             })
-        },
-        scanLabor () {
-            for (var id in this.list) {
-                if (!this.list[id].got && !this.list[id].running) {
-                    this.list[id].running = true
-                    this.getLabor(id)
-                }
-            }
         },
         getLabor (id) {
             fetch('/api/student/labor/get?' + (new Date()).getTime(), {
@@ -158,8 +154,18 @@ export default {
         }
     },
     mounted () {
-        auth.student()
-        this.setup()
+        if (auth.user.logged) {
+            auth.student((status) => {
+                this.$root.checking = false
+                if (!status) {
+                    $('#error').modal('show')
+                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
+                }
+            })
+            this.setup()
+        } else {
+            this.$router.push('/')
+        }
     },
     destroyed () {
         clearInterval(this.handle)

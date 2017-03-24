@@ -29,6 +29,11 @@
             <button class="btn btn-default" id="submit" @click="submit">登入</button>
         </form>
     </div>
+    <div v-else>
+        <h1>登入</h1>
+        <p class="lead">您已經登入。</p>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-home"></span> 回首頁</router-link>
+    </div>
 </template>
 
 <script>
@@ -50,16 +55,16 @@ export default {
                 this.$root.checking = false
                 if (status) {
                     if (auth.user.logged) {
-                        window.location = "#"
+                        this.$router.push('/')
                     } else {
                         this.account = this.password = this.captcha = ""
                         this.captchaImg = '/api/login/image?' + (new Date()).getTime()
                         $('#error').modal('show')
-                        $('#err_msg').text("輸入的資料有誤，請再檢查。")
+                        $('#error #msg').text("輸入的資料有誤，請再檢查。")
                     }
                 } else {
                     $('#error').modal('show')
-                    $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
+                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
                 }
             })
         },

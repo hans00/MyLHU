@@ -11,7 +11,7 @@ const app = new Vue({
             this.checking = true
             auth.logout((status) => {
                 this.$root.checking = false
-                location = '#'
+                this.$router.push('/')
             })
         }
     },
@@ -20,12 +20,12 @@ const app = new Vue({
             this.$root.checking = false
             if (!status) {
                 $('#error').modal('show')
-                $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
+                $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
             }
             if (auth.user.logged) {
                 this.handle = setInterval(() => {
                     auth.check()
-                }, 30000)
+                }, 1000)
             }
         })
     },

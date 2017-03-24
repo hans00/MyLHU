@@ -2,20 +2,22 @@ import 'whatwg-fetch'
 
 export default {
     user: {
-        logged: false,
+        logged:  false,
         student: false,
-        course: false
+        course:  false,
+        auto_refresh: {}
     },
     student (cb) {
-        var user = this.user
+        var system = this
         fetch('/api/student/check', { credentials: 'same-origin' })
         .then((response) => { return response.json() })
         .then((json) => {
             if (json.status == "success") {
                 if (json.logged) {
-                    user.student = true
+                    system.user.student = true
+                } else {
+                    system.student_login(cb)
                 }
-                if (typeof cb === "function") cb(true)
             } else {
                 if (typeof cb === "function") cb(false)
             }

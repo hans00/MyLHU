@@ -29,20 +29,13 @@ export default {
             }
             auth.student((status) => {
                 this.$root.checking = false
-                if (status && !auth.user.student) {
-                    this.$root.checking = true
-                    auth.student_login((status) => {
-                        this.$root.checking = false
-                        if (!status) {
-                            $('#error').modal('show')
-                            $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
-                        }
-                    })
-                } else {
+                if (!status) {
                     $('#error').modal('show')
-                    $('#err_msg').text("無法連線至龍華伺服器，請稍後再試。")
+                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
                 }
             })
+        } else {
+            this.$router.push('/')
         }
     }
 }

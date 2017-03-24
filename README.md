@@ -10,13 +10,17 @@ The system for LHU student.
 
 [![](https://images.microbadger.com/badges/image/hans00/mylhu.svg)](https://microbadger.com/images/hans00/mylhu)
 
+## Any problen?
+
+如果有 Bug 請於 GitHub Issue 通知或自行 PR。（有任何想要新增的功能也是
 
 ## Features
 
-- [x] 搶勞作 
+- [x] 搶勞作
+	- [x] 無差別
+	- [ ] 選擇性
 - [ ] 教學問卷
 - [ ] 選課
-- [ ] Unknown
 
 ## P.S.
 
