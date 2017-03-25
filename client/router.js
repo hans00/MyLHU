@@ -8,6 +8,7 @@ import Logout from './view/main.vue'
 import Student from './view/student/main.vue'
 import Labor from './view/student/labor.vue'
 import Course from './view/course.vue'
+import NotFound from './view/notfound.vue'
 
 Vue.use(VueRouter)
 
@@ -40,6 +41,10 @@ const router = new VueRouter({
         {
             path: '/course',
             component: Course
+        },
+        {
+            path: '*',
+            component: NotFound
         }
     ]
 })

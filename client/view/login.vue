@@ -4,23 +4,23 @@
         <p class="lead">
             請直接輸入龍華系統之帳號密碼即可。
         </p>
-        <form class="form-horizontal">
+        <form class="form-horizontal col-md-6 col-md-offset-3">
             <div class="form-group">
                 <label for="account" class="col-sm-2 control-label">帳號</label>
                 <div class="col-sm-10">
-                    <input type="text" autocomplete="off" placeholder="帳號" class="form-control" v-model="account" id="account" required>
+                    <input type="text" autocomplete="off" placeholder="請輸入您的學號" class="form-control" v-model="account" id="account" required>
                 </div>
             </div>
             <div class="form-group">
                 <label for="password" class="col-sm-2 control-label">密碼</label>
                 <div class="col-sm-10">
-                    <input type="password" autocomplete="off" placeholder="密碼" class="form-control" v-model="password" id="password" required>
+                    <input type="password" autocomplete="off" placeholder="請輸入您龍華資訊入口之密碼" class="form-control" v-model="password" id="password" required>
                 </div>
             </div>
             <div class="form-group">
                 <label for="captcha" class="col-sm-2 control-label">驗證碼</label>
                 <div class="col-sm-10">
-                    <input type="text" autocomplete="off" placeholder="驗證碼" class="form-control" v-model="captcha" id="captcha" required>
+                    <input type="text" autocomplete="off" placeholder="請輸入下方驗證碼圖片之文字" class="form-control" v-model="captcha" id="captcha" required>
                 </div>
             </div>
             <div class="form-group">
