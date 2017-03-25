@@ -2,6 +2,9 @@ var path = require('path');
 var webpack = require('webpack')
 
 var config = {
+    devServer: {
+        contentBase: 'assets'
+    },
     entry: [
         'webpack/hot/dev-server',
         'whatwg-fetch',
@@ -13,6 +16,10 @@ var config = {
         filename: 'assets/bundle.js'
     },
     plugins: [
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        }),
         new webpack.HotModuleReplacementPlugin()
     ],
     module: {
