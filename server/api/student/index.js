@@ -3,6 +3,7 @@ import cheerio from 'cheerio'
 import cookieJar from '../../lib/cookieJar'
 import request from 'request'
 import labor from './labor'
+import inquire from './inquire'
 
 export default (urls) => {
 	let student = Router()
@@ -33,10 +34,10 @@ export default (urls) => {
 			res.json({
 				status: 'faild'
 			})
-	  	})
+		})
 	})
 
-    student.get('/login', (req, res) => {
+	student.get('/login', (req, res) => {
 		var cookie = new cookieJar(req)
 		var body = ""
 		request.get({
@@ -78,25 +79,19 @@ export default (urls) => {
 					status: 'faild',
 					step: 'login'
 				})
-		  	})
+			})
 		})
 		.on('error', (err) => {
 			res.json({
 				status: 'faild',
 				step: 'sso'
 			})
-	  	})
+		})
 	})
 
 	student.use('/labor', labor(urls))
 
-    student.get('/inquire/teaching', (req, res) => {
-		res.json({status:"faild"})
-	})
-
-    student.get('/inquire/tutor', (req, res) => {
-		res.json({status:"faild"})
-	})
-
+	student.use('/inquire', inquire(urls))
+	
 	return student
 }

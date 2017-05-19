@@ -10,7 +10,7 @@ import course from './course'
 export default (urls) => {
 	let api = Router();
 
-    api.get('/', (req, res) => {
+	api.get('/', (req, res) => {
 		res.json({ version })
 	})
 
@@ -37,15 +37,15 @@ export default (urls) => {
 					logged: false
 				})
 			}
-  		})
+		})
 		.on('error', (err) => {
 			res.json({
 				status: 'faild'
 			})
-  		})
+		})
 	})
 
-    api.get('/login/image', (req, res) => {
+	api.get('/login/image', (req, res) => {
 		var cookie = new cookieJar(req)
 		request.get({
 			url: urls.eportal.captcha,
@@ -54,7 +54,7 @@ export default (urls) => {
 		.pipe(res)
 	})
 
-    api.post('/login', (req, res) => {
+	api.post('/login', (req, res) => {
 		var cookie = new cookieJar(req)
 		var body = ""
 		request.post({
@@ -66,7 +66,7 @@ export default (urls) => {
 		.on('response', () => cookie.save())
 		.on('data', (data) => body += data)
 		.on('end', () => {
-	    	var $ = cheerio.load(body)
+			var $ = cheerio.load(body)
 			if ($("*:contains('錯誤')").length > 0) {
 				res.json({
 					status: 'success',
@@ -83,10 +83,10 @@ export default (urls) => {
 			res.json({
 				status: 'faild'
 			})
-	  	})
+		})
 	})
 
-    api.get('/logout', (req, res) => {
+	api.get('/logout', (req, res) => {
 		var cookie = new cookieJar(req)
 		var body = ""
 		request.get({
@@ -106,7 +106,7 @@ export default (urls) => {
 			res.json({
 				status: 'faild'
 			})
-	  	})
+		})
 	})
 
 	api.use('/student', student(urls))

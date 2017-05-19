@@ -4,7 +4,7 @@
         <p class="lead">
             請直接輸入龍華系統之帳號密碼即可。
         </p>
-        <form class="form-horizontal col-md-6 col-md-offset-3">
+        <form class="form-horizontal col-md-6 col-md-offset-3" v-on:submit.prevent="submit">
             <div class="form-group">
                 <label for="account" class="col-sm-2 control-label">帳號</label>
                 <div class="col-sm-10">
@@ -26,7 +26,7 @@
             <div class="form-group">
                 <img :src="captchaImg" @click="refresh" alt="驗證碼" style="border-radius:6px;height:34px">
             </div>
-            <button class="btn btn-default" id="submit" @click="submit">登入</button>
+            <button class="btn btn-default" id="submit" type="submit">登入</button>
         </form>
     </div>
     <div v-else>

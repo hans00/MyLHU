@@ -15,8 +15,15 @@
             "get"  : "http://www.lhu.edu.tw/StudAp/C00/C4001/Apply/"
         },
         "inquire" : {
-            "teaching" : "http://www.lhu.edu.tw/NStudAp/B00/B2001/Inquire/Inquire.aspx",
-            "tutor" : "http://www.lhu.edu.tw/NStudAp/B00/B2001/TutorInquire/Question.aspx"
+            "teaching" :  {
+                "login" : "http://www.lhu.edu.tw/StudAp/Nlhu/ChangePage.aspx?FID=B2001A",
+                "index" : "http://www.lhu.edu.tw/NStudAp/B00/B2001/Inquire/Inquire.aspx",
+                "base"  : "http://www.lhu.edu.tw/NStudAp/B00/B2001/Inquire/"
+            },
+            "tutor" : {
+                "login" : "http://www.lhu.edu.tw/StudAp/Nlhu/ChangePage.aspx?FID=B2001B",
+                "index" : "http://www.lhu.edu.tw/NStudAp/B00/B2001/TutorInquire/Question.aspx"
+            }
         }
     },
     "course" : {

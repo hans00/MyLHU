@@ -6,6 +6,8 @@
         </p>
         <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <router-link to="/student/labor" class="btn btn-primary btn-lg">搶勞作</router-link>
+        <router-link to="/student/inquire/teaching" class="btn btn-primary btn-lg">教學問卷</router-link>
+        <router-link to="/student/inquire/tutor" class="btn btn-primary btn-lg">導師問卷</router-link>
     </div>
     <div v-else>
         <h1>歡迎使用 My LHU</h1>

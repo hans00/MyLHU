@@ -23,7 +23,7 @@ The system for LHU student.
 - [x] 搶勞作
     - [x] 無差別
     - [ ] 選擇性
-- [ ] 教學問卷
+- [x] 問卷
 - [ ] 選課
 
 ## P.S.
