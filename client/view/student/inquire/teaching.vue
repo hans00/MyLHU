@@ -21,11 +21,11 @@
         </div>
         <div class="col-lg-6">
             <div v-if="selected != ''">
-                <form class="form-inline">
+                <form class="form-inline" v-on:submit.prevent="submit">
                     <div class="form-group">
                         <label for="tscore">您想給老師多少分呢？</label>
                         <div class="input-group">
-                            <input id="tscore" v-bind="tscore" class="form-control" type="number" min="1" max="5" step="1" value="5"/>
+                            <input id="tscore" v-model="tscore" class="form-control" type="number" min="1" max="5" step="1" value="5"/>
                             <span class="input-group-btn">
                                 <a class="btn btn-default" onclick="document.getElementById('tscore').stepUp(1)"><i class="glyphicon glyphicon-plus"></i></a>
                                 <a class="btn btn-default" onclick="document.getElementById('tscore').stepDown(1)"><i class="glyphicon glyphicon-minus"></i></a>
@@ -36,7 +36,7 @@
                     <div class="form-group">
                         <label for="myscore">您想給自己多少分呢？</label>
                         <div class="input-group">
-                            <input id="myscore" v-bind="myscore" class="form-control" type="number" min="1" max="10" step="1" value="10"/>
+                            <input id="myscore" v-model="myscore" class="form-control" type="number" min="1" max="10" step="1" value="10"/>
                             <span class="input-group-btn">
                                 <a class="btn btn-default" onclick="document.getElementById('myscore').stepUp(1)"><i class="glyphicon glyphicon-plus"></i></a>
                                 <a class="btn btn-default" onclick="document.getElementById('myscore').stepDown(1)"><i class="glyphicon glyphicon-minus"></i></a>
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <br><br>
-                    <button class="btn btn-primary" @click="submit">送出</button>
+                    <button class="btn btn-primary" type="submit">送出</button>
                 </form>
                 <h4 v-html="result"></h4>
             </div>

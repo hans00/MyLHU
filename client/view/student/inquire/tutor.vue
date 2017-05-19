@@ -5,13 +5,13 @@
             導師問券填寫
         </p>
         <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
-        <form class="">
+        <form  v-on:submit.prevent="submit">
             <div class="form-group">
                 <label for="score">您想給班導多少分呢？</label>
                 <span v-html="score" class="badge"></span><br>
-                <input class="slider" id="score" v-bind="score" type="text" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="5"/>
+                <input class="slider" id="score" v-model="score" type="text" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="5"/>
             </div>
-            <button class="btn btn-primary" @click="submit">送出</button>
+            <button class="btn btn-primary" type="submit">送出</button>
         </form>
         <h3 v-html="result"></h3>
     </div>
@@ -31,8 +31,7 @@ export default {
     data ()  {
         return {
             user: auth.user,
-            result: "",
-            score: 5
+            result: ""
         }
     },
     methods: {
