@@ -20,11 +20,11 @@
             <div class="form-group">
                 <label for="captcha" class="col-sm-2 control-label">驗證碼</label>
                 <div class="col-sm-10">
-                    <input type="text" autocomplete="off" placeholder="請輸入下方驗證碼圖片之文字" class="form-control" v-model="captcha" id="captcha" required>
+                    <input type="text" autocomplete="off" title="請輸入下方驗證碼圖片之文字" placeholder="請輸入下方驗證碼圖片之文字" class="form-control" v-model="captcha" id="captcha" required>
                 </div>
             </div>
             <div class="form-group">
-                <img :src="captchaImg" @click="refresh" alt="驗證碼" style="border-radius:6px;height:34px">
+                <img :src="captchaImg" @click="refresh" @load="autoFill" id="captchaImg" alt="驗證碼" style="border-radius:6px;height:34px">
             </div>
             <button class="btn btn-default" id="submit" type="submit">登入</button>
         </form>
@@ -38,11 +38,13 @@
 
 <script>
 import auth from '../auth'
+import Tesseract from 'tesseract.js'
 export default {
     data () {
         return {
             user: auth.user,
-            captchaImg: '/api/login/image?' + (new Date()).getTime()
+            captchaImg: '/api/login/image?' + (new Date()).getTime(),
+            captcha: ""
         }
     },
     methods: {
@@ -69,7 +71,19 @@ export default {
             })
         },
         refresh () {
+            this.captcha = ""
             this.captchaImg = '/api/login/image?' + (new Date()).getTime()
+        },
+        autoFill() {
+            $("#captcha").attr("placeholder","分析中")
+            let vue = this
+            Tesseract.recognize(document.getElementById("captchaImg"), {
+                tessedit_char_blacklist: 'abcdefghijklmnopqrstuvwxyz1234567890\'\":;=+-_\\|]}[{`!‘ @#$%^&*()/?.>,<'
+            })
+            .then((result) => {
+                $("#captcha").attr("placeholder","")
+                vue.captcha = result.text.replace("\n\n","")
+            })
         }
     }
 }
