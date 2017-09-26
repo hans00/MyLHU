@@ -25,8 +25,3 @@ The system for LHU student.
     - [ ] 選擇性
 - [x] 問卷
 - [ ] 選課
-
-## P.S.
-
-> 由於龍華系統的 HTTPS 過舊無法與 Node.JS 建立起安全拹定，所以直接走 HTTP 出去。
-> 注重資安的可以自己用 Docker 執行（port: 3000）或者改寫。
