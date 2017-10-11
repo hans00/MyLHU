@@ -45,6 +45,7 @@
     "dev:client": "webpack-dev-server --config client/webpack.config.js",
     "dev:server": "nodemon -w server --exec \"babel-node server\"",
     "build": "npm run build:client && npm run build:server",
+    "postinstall": "npm build",
     "start": "node dist"
   },
   "main": "dist/index.js",

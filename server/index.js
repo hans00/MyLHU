@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 app.use(express.static('assets'))
 app.use('/api', api(urls))
 
-app.listen(3000, function () {
+app.listen((process.env.PORT || 3000), function () {
     console.log('Listening on port 3000!');
 })
 
