@@ -3,7 +3,7 @@
 The system for LHU student.
 
 [Website (HTTPS)🔒](https://mylhu.arukascloud.io/) <- 暫停服務
-[臨時替代站點](http://mylhu-test-hans.7e14.starter-us-west-2.openshiftapps.com/#/)
+[臨時替代站點](https://mylhu.herokuapp.com/)
 
 [Repo on Docker Hub](https://hub.docker.com/r/hans00/mylhu/)
 
