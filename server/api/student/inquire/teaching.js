@@ -42,12 +42,10 @@ export default (urls) => {
 							avaiable: !!data
 						}
 						list[id] = d
-						if (data) {
-							req.session.teaching[id] = [
-								data[1],
-								data[2]
-							]
-						}
+						req.session.teaching[id] = [
+							data[1],
+							data[2]
+						]
 					}
 					if (i == table.length-1) {
 						res.json({
@@ -71,7 +69,7 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
-		if (!req.session.teaching[req.body.id] || !req.body.myscore || !req.body.tscore) {
+		if (!req.session.teaching || !req.session.teaching[req.body.id] || !req.body.myscore || !req.body.tscore) {
 			res.json({
 				status: 'faild',
 				step: 'check'
