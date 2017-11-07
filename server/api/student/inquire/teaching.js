@@ -26,36 +26,38 @@ export default (urls) => {
 			var table = $("td a").parent().parent().parent()
 			if (table.length > 0) {
 				var n = 0
-				table.each(function(i, e) {
-					var text = $(this).find('td font')
-					if (text.length) {
-						var _class = $(text[0]).text()
-						var _subject = $(text[1]).text()
-						var _teacher = $(text[2]).text().replace(/ /g, "")
-						var _href = $(this).find('td a').prop('href')
-						var data = find_data.exec(_href)
-						var id = md5(_class+_subject+_teacher)
-						var d = {
-							class: _class,
-							subject: _subject,
-							teacher: _teacher,
-							avaiable: !!data
+				var p = Promise.resolve()
+				table.each((i, e) => {
+					p = p.then(() => { 
+						var text = $(this).find('td font')
+						if (text.length) {
+							var _class = $(text[0]).text()
+							var _subject = $(text[1]).text()
+							var _teacher = $(text[2]).text().replace(/ /g, "")
+							var _href = $(this).find('td a').prop('href')
+							var data = find_data.exec(_href)
+							var id = md5(_class+_subject+_teacher)
+							var d = {
+								class: _class,
+								subject: _subject,
+								teacher: _teacher,
+								avaiable: !!data
+							}
+							list[id] = d
+							if (data) {
+								req.session.teaching[id] = [
+									data[1],
+									data[2]
+								]
+							}
 						}
-						list[id] = d
-						if (data) {
-							req.session.teaching[id] = [
-								data[1],
-								data[2]
-							]
-						}
-					}
-					if (i == table.length-1) {
-						req.session.save()
-						res.json({
-							status: 'success',
-							list: list
-						})
-					}
+					})
+				})
+				p.then(() => {
+					res.json({
+						status: 'success',
+						list: list
+					})
 				})
 			} else {
 				res.json({
@@ -72,7 +74,7 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
-		if (!req.session.teaching[req.body.id]) {
+		if (!req.session.teaching[req.body.id] || !req.body.myscore || !req.body.tscore) {
 			res.json({
 				status: 'faild',
 				step: 'check'

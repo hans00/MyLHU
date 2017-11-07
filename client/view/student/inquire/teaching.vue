@@ -71,7 +71,9 @@ export default {
             user: auth.user,
             list: [],
             selected: '',
-            result: ''
+            result: '',
+            myscore: 10,
+            tscore: 5
         }
     },
     methods: {
