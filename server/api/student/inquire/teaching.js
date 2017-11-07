@@ -42,7 +42,7 @@ export default (urls) => {
 							avaiable: !!data
 						}
 						list[id] = d
-						if (!!data) {
+						if (data) {
 							console.log(data)
 							req.session.teaching[id] = [
 								data[1],
@@ -73,6 +73,8 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
+		console.log(req.session.teaching)
+		console.log(req.body.id)
 		if (!req.session.teaching[req.body.id]) {
 			res.json({
 				status: 'faild',
