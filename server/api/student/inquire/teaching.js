@@ -43,15 +43,14 @@ export default (urls) => {
 						}
 						list[id] = d
 						if (data) {
-							console.log(data)
 							req.session.teaching[id] = [
 								data[1],
 								data[2]
 							]
-							console.log(req.session.teaching[id])
 						}
 					}
 					if (i == table.length-1) {
+						req.session.save()
 						res.json({
 							status: 'success',
 							list: list
@@ -73,8 +72,6 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
-		console.log(req.session)
-		console.log(req.body.id)
 		if (!req.session.teaching[req.body.id]) {
 			res.json({
 				status: 'faild',

@@ -53,6 +53,7 @@ export default (urls) => {
 				for (var id in req.session.labor) {
 					output.list[id] = req.session.labor[id].name
 				}
+				req.session.save()
 				res.json(output)
 			} else {
 				res.json({
