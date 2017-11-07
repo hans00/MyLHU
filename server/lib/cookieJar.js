@@ -29,7 +29,6 @@ export default class cookieJar {
 
     save (req, jar) {
         this.req.session.loggedJar = this.jar._jar.toJSON()
-        this.req.session.save()
     }
 
 }

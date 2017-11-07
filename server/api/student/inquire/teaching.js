@@ -42,12 +42,17 @@ export default (urls) => {
 							avaiable: !!data
 						}
 						list[id] = d
-						req.session.teaching[id] = [
-							data[1],
-							data[2]
-						]
+						if (data) {
+							req.session.teaching[id] = [
+								data[1],
+								data[2]
+							]
+						} else {
+							req.session.teaching[id] = null
+						}
 					}
 					if (i == table.length-1) {
+						console.log(req.session)
 						res.json({
 							status: 'success',
 							list: list
@@ -69,6 +74,7 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
+		console.log(req.session.teaching)
 		if (!req.session.teaching || !req.session.teaching[req.body.id] || !req.body.myscore || !req.body.tscore) {
 			res.json({
 				status: 'faild',
