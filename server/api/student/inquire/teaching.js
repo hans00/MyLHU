@@ -33,6 +33,7 @@ export default (urls) => {
 						var _href = $(this).find('td a').prop('href')
 						var data = find_data.exec(_href)
 						var id = md5(_class+_subject+_teacher)
+						console.log(data)
 						var d = {
 							class: _class,
 							subject: _subject,
@@ -40,7 +41,7 @@ export default (urls) => {
 							avaiable: !!data
 						}
 						list[id] = d
-						if (data) {
+						if (!!data) {
 							req.session.teaching[id] = [
 								data[1],
 								data[2]
