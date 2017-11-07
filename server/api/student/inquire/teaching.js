@@ -11,9 +11,6 @@ export default (urls) => {
 		const find_data = /'([\w]+)' *, *'([\w+\$\d]+)'/;
 		var cookie = new cookieJar(req)
 		var body = ""
-		if (!req.session.labor) {
-			req.session.teaching = {}
-		}
 		request.get({
 				url: urls.student.inquire.teaching.login,
 				jar: cookie.jar
@@ -21,6 +18,9 @@ export default (urls) => {
 		.on('response', () => cookie.save())
 		.on('data', (data) => body += data)
 		.on('end', () => {
+			if (!req.session.labor) {
+				req.session.teaching = {}
+			}
 			var list = {}
 			var $ = cheerio.load(body)
 			var table = $("td a").parent().parent().parent()
@@ -73,7 +73,7 @@ export default (urls) => {
 	})
 
 	teaching.post('/fill', (req, res) => {
-		console.log(req.session.teaching)
+		console.log(req.session)
 		console.log(req.body.id)
 		if (!req.session.teaching[req.body.id]) {
 			res.json({
