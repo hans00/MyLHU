@@ -9,6 +9,7 @@ WORKDIR $APP_HOME
 # Install app dependencies
 COPY . $APP_HOME
 RUN npm install
+RUN npm run build
 
 # Make port 3000 available for publish
 EXPOSE 3000
