@@ -38,7 +38,6 @@
 
 <script>
 import auth from '../auth'
-import Tesseract from 'tesseract.js'
 export default {
     data () {
         return {
@@ -78,11 +77,11 @@ export default {
             $("#captcha").attr("placeholder","分析中")
             let vue = this
             Tesseract.recognize(document.getElementById("captchaImg"), {
-                tessedit_char_blacklist: 'abcdefghijklmnopqrstuvwxyz1234567890\'\":;=+-_\\|]}[{`!‘ @#$%^&*()/?.>,<'
+                tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             })
             .then((result) => {
                 $("#captcha").attr("placeholder","")
-                vue.captcha = result.text.replace("\n\n","")
+                vue.captcha = result.text.replace("\n\n","").replace(" ","")
             })
         }
     }

@@ -50,7 +50,11 @@ export default (urls) => {
 		request.get({
 			url: urls.eportal.captcha,
 			jar: cookie.jar
-		}).on('response', () => cookie.save())
+		})
+		.on('response', () => cookie.save())
+		.on('error', (err) => {
+			res.send()
+		})
 		.pipe(res)
 	})
 

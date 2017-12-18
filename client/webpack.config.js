@@ -18,7 +18,8 @@ var config = {
     plugins: [
         new webpack.ProvidePlugin({
             $: "jquery",
-            jQuery: "jquery"
+            jQuery: "jquery",
+            Tesseract: "tesseract.js"
         }),
         new webpack.HotModuleReplacementPlugin()
     ],
