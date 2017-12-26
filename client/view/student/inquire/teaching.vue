@@ -108,6 +108,8 @@ export default {
                 this.$root.checking = false
                 if (json.status == "success") {
                     t.result = "成功送出。"
+                    t.list[t.selected].avaiable = false
+                    t.selected = ''
                 } else {
                     t.result = "失敗！！"
                 }
