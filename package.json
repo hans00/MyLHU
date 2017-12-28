@@ -13,6 +13,7 @@
     "md5": "^2.2.1",
     "q": "^1.5.0",
     "request": "^2.79.0",
+    "session-memory-store": "^0.2.2",
     "store": "^1.3.20",
     "tesseract.js": "^1.0.10",
     "tough-cookie": "^2.3.2",

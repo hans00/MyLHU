@@ -4,7 +4,9 @@ import bodyParser from 'body-parser'
 import crypto from 'crypto'
 import api from './api'
 import urls from '../urls.json'
+import sess_store from 'session-memory-store'
 
+let MemoryStore = sess_store(session)
 let app = express()
 
 // parse application/x-www-form-urlencoded
@@ -18,7 +20,8 @@ app.use( session({
         },
         secret: crypto.randomBytes(128).toString('hex'),
         resave: true,
-        saveUninitialized: true
+        saveUninitialized: true,
+        store: new MemoryStore()
     })
 )
 
