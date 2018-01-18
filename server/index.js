@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import api from './api'
 import urls from '../urls.json'
 import sess_store from 'session-memory-store'
+import history from 'connect-history-api-fallback'
 
 let MemoryStore = sess_store(session)
 let app = express()
@@ -31,8 +32,13 @@ app.use((req, res, next) => {
     next()
 })
 
-app.use(express.static('assets'))
 app.use('/api', api(urls))
+
+app.use(history({
+    index: 'index.html'
+}))
+
+app.use(express.static('assets'))
 
 app.listen((process.env.PORT || 3000), function () {
     console.log('Listening on port 3000!');
