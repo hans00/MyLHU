@@ -1,6 +1,9 @@
 import Vue from 'vue'
+import VueResource from 'vue-resource'
 import router from './router'
 import auth from './auth'
+
+Vue.use(VueResource)
 
 const app = new Vue({
     data ()  {

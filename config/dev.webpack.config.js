@@ -3,17 +3,22 @@ var webpack = require('webpack')
 
 var config = {
     devServer: {
-        contentBase: 'assets'
+        proxy: {
+            "/api": "http://localhost:3000"
+        },
+        publicPath: '/',
+        contentBase: 'assets',
+        historyApiFallback: true
     },
     entry: [
         'webpack/hot/dev-server',
-        'whatwg-fetch',
         'bootstrap',
-        path.resolve(__dirname, 'main.js'),
-        path.resolve(__dirname, 'auth.js')
+        path.resolve(__dirname, '../client/main.js'),
+        path.resolve(__dirname, '../client/auth.js')
     ],
     output: {
-        filename: 'assets/bundle.js'
+        publicPath: "/assets/",
+        filename: "bundle.js"
     },
     plugins: [
         new webpack.ProvidePlugin({
@@ -21,7 +26,12 @@ var config = {
             jQuery: "jquery",
             Tesseract: "tesseract.js"
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"development"'
+            }
+        })
     ],
     module: {
         loaders: [
@@ -43,7 +53,7 @@ var config = {
     resolve: {
         extensions: ['', '.js', '.vue'],
         alias: {
-            vue: 'vue/dist/vue.js'
+            vue: 'vue/dist/vue'
         }
     },
     node: {

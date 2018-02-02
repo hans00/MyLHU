@@ -1,4 +1,4 @@
-import 'whatwg-fetch'
+import Vue from 'vue'
 
 export default {
     user: {
@@ -9,8 +9,8 @@ export default {
     },
     student (cb) {
         var system = this
-        fetch('/api/student/check', { credentials: 'same-origin' })
-        .then((response) => { return response.json() })
+        Vue.http.get('/api/student/check')
+        .then((response) => response.json())
         .then((json) => {
             if (json.status == "success") {
                 if (json.logged) {
@@ -25,8 +25,8 @@ export default {
     },
     student_login (cb) {
         var user = this.user
-        fetch('/api/student/login', { credentials: 'same-origin' })
-        .then((response) => { return response.json() })
+        Vue.http.get('/api/student/login')
+        .then((response) => response.json())
         .then((json) => {
             if (json.status == "success") {
                 user.student = json.logged
@@ -39,10 +39,9 @@ export default {
     },
     check (cb) {
         var user = this.user
-        fetch('/api/login/check', {credentials: 'same-origin'})
-        .then(function(response) {
-            return response.json()
-        }).then(function(json) {
+        Vue.http.get('/api/login/check')
+        .then((response) => response.json())
+        .then((json) => {
             if (json.status == "success") {
                 user.logged = json.logged
                 if (typeof cb === "function") cb(true)
@@ -53,20 +52,13 @@ export default {
     },
     login (account, password, code, cb) {
         var user = this.user
-        fetch('/api/login', {
-            credentials: 'same-origin',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                muid: account,
-                mpassword: password,
-                authcode: code
-            })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
+        Vue.http.post('/api/login', {
+            muid: account,
+            mpassword: password,
+            authcode: code
+        })
+        .then((response) => response.json())
+        .then((json) => {
             if (json.status == "success") {
                 user.logged = json.logged
                 if (typeof cb === "function") cb(true)
@@ -77,10 +69,9 @@ export default {
     },
     logout (cb) {
         var user = this.user
-        fetch('/api/logout', {credentials: 'same-origin'})
-        .then(function(response) {
-            return response.json()
-        }).then(function(json) {
+        Vue.http.get('/api/logout')
+        .then((response) => response.json())
+        .then((json) => {
             if (json.status == "success") {
                 user.logged = false
                 user.student = false

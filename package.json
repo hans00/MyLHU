@@ -12,15 +12,14 @@
     "express-session": "^1.14.2",
     "jquery": "^3.2.1",
     "md5": "^2.2.1",
-    "q": "^1.5.0",
     "request": "^2.79.0",
     "session-memory-store": "^0.2.2",
     "store": "^1.3.20",
     "tesseract.js": "^1.0.10",
     "tough-cookie": "^2.3.2",
     "vue": "^2.1.4",
-    "vue-router": "^2.1.1",
-    "whatwg-fetch": "^2.0.3"
+    "vue-resource": "^1.3.5",
+    "vue-router": "^2.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -28,7 +27,9 @@
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.16.0",
+    "cross-env": "^5.1.3",
     "css-loader": "^0.28.4",
+    "express-vue-dev": "^1.12.3",
     "file-loader": "^0.9.0",
     "json-loader": "^0.5.4",
     "nodemon": "^1.11.0",
@@ -42,10 +43,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:client": "webpack --config client/webpack.config.js",
-    "build:server": "babel server -s -D -d dist",
-    "dev:client": "webpack-dev-server --config client/webpack.config.js",
-    "dev:server": "nodemon -w server --exec \"babel-node server\"",
+    "build:client": "cross-env NODE_ENV=production webpack --config config/prod.webpack.config.js",
+    "build:server": "cross-env NODE_ENV=production babel server -s -D -d dist",
+    "dev:client": "cross-env NODE_ENV=development webpack-dev-server --config config/dev.webpack.config.js",
+    "dev:server": "cross-env NODE_ENV=development nodemon -w server --exec \"babel-node server\"",
+    "dev": "npm run dev:server | npm run dev:client",
     "build": "npm run build:client && npm run build:server",
     "postinstall": "npm run build",
     "start": "node dist"
