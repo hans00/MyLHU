@@ -5,7 +5,7 @@
             搶勞作！！！<br>
             目前功能僅無差別搶勞作（不搶限xx系專用勞作），若需取消報名請回到學生資訊系統操作。
         </p>
-        <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <form class="form-inline">
             <div class="form-group">
                 <label for="start" class="sr-only control-label">啟動</label>

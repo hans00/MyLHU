@@ -4,7 +4,7 @@
         <p class="lead">
             導師問券填寫
         </p>
-        <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <form  v-on:submit.prevent="submit">
             <div class="form-group">
                 <label for="score">您想給班導多少分呢？</label>

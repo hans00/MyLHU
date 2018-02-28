@@ -1,23 +1,16 @@
 import { Router } from 'express'
 import cheerio from 'cheerio'
 import cookieJar from '../../lib/cookieJar'
-import request from 'request'
+import r from '../../lib/backRequest'
 import labor from './labor'
 import inquire from './inquire'
 
 export default (urls) => {
 	let student = Router()
-	var body = ""
 	student.get('/check', (req, res) => {
 		var cookie = new cookieJar(req)
-		request.get({
-				url: urls.student.check,
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
+		r.get(urls.student.check, cookie.jar)
+		.then(($) => {
 			if ($("*:contains('重新登入')").length > 0) {
 				res.json({
 					status: 'success',
@@ -30,61 +23,38 @@ export default (urls) => {
 				})
 			}
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
 
 	student.get('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.eportal.std_sso,
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
-			var body2 = ""
-			request.post({
-					url: urls.student.login,
-					jar: cookie.jar,
-					form: {
-						sessionId: $("input[name='sessionId']").val(),
-						LogLDAPIDTXSd: $("input[name='LogLDAPIDTXSd']").val(),
-						LogLDAPPassTXSd: $("input[name='LogLDAPPassTXSd']").val()
-					}
-				})
-			.on('response', () => cookie.save())
-			.on('data', (data) => body2 += data)
-			.on('end', () => {
-				var $ = cheerio.load(body2)
-				if ($("*:contains('錯誤')").length > 0) {
-					res.json({
-						status: 'success',
-						logged: false
-					})
-				} else {
-					res.json({
-						status: 'success',
-						logged: true
-					})
-				}
-			})
-			.on('error', (err) => {
-				res.json({
-					status: 'faild',
-					step: 'login'
-				})
-			})
+		r.post(urls.student.login, cookie.jar, {
+			form: {
+				sessionId: "fake_data_OWO",
+				LogLDAPIDTXSd: req.session.account,
+				LogLDAPPassTXSd: req.session.password
+			}
 		})
-		.on('error', (err) => {
+		.then(($) => {
+			if ($("*:contains('錯誤')").length > 0) {
+				res.json({
+					status: 'success',
+					logged: false
+				})
+			} else {
+				res.json({
+					status: 'success',
+					logged: true
+				})
+			}
+		})
+		.catch((err) => {
 			res.json({
-				status: 'faild',
-				step: 'sso'
+				status: 'conn_faild'
 			})
 		})
 	})

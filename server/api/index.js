@@ -3,9 +3,10 @@ import { Router } from 'express'
 import querystring from 'querystring'
 import cheerio from 'cheerio'
 import cookieJar from '../lib/cookieJar'
-import request from 'request'
+import r from '../lib/backRequest'
 import student from './student'
 import course from './course'
+import crypto from 'crypto'
 
 export default (urls) => {
 	let api = Router();
@@ -16,99 +17,66 @@ export default (urls) => {
 
 	api.get('/login/check', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.eportal.main,
-				headers: { "Referer": urls.eportal.main },
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var input = cheerio.load(body)('input#muid[type="hidden"]')
-			if (input.length > 0 && input.val() != '') {
-				res.json({
-					status: 'success',
-					logged: true
-				})
-			} else {
-				res.json({
-					status: 'success',
-					logged: false
-				})
-			}
-		})
-		.on('error', (err) => {
+		r.get(urls.imoving.login, cookie.jar)
+		.then(($) => {
+			var login = $('[name="登入"]')
 			res.json({
-				status: 'faild'
+				status: 'success',
+				logged: (login.length == 0)
 			})
 		})
-	})
-
-	api.get('/login/image', (req, res) => {
-		var cookie = new cookieJar(req)
-		request.get({
-			url: urls.eportal.captcha,
-			jar: cookie.jar
+		.catch((err) => {
+			res.json({
+				status: 'conn_faild'
+			})
 		})
-		.on('response', () => cookie.save())
-		.on('error', (err) => {
-			res.send()
-		})
-		.pipe(res)
 	})
 
 	api.post('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.post({
-				url: urls.eportal.login,
-				headers: { "Referer": urls.eportal.index },
-				jar: cookie.jar,
-				form: req.body
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
-			if ($("*:contains('錯誤')").length > 0) {
+		r.post(urls.imoving.login, cookie.jar, {
+			form: {
+				authority: "lhu",
+				nativeApp: "true",
+				loginUser: req.body.account,
+				loginPassword: req.body.password,
+				remainLoggedIn: "true"
+			}
+		})
+		.then(($) => {
+			if ($("*:contains('登入出現問題')").length > 0) {
 				res.json({
 					status: 'success',
 					logged: false
 				})
 			} else {
+				let token = crypto.randomBytes(128).toString('hex')
 				res.json({
 					status: 'success',
-					logged: true
+					logged: true,
+					token:  token
 				})
 			}
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
 
 	api.get('/logout', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.eportal.logout,
-				headers: { "Referer": urls.eportal.main },
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
+		request.get(urls.imoving.logout, cookie.jar)
+		.then(($) => {
 			req.session.loggedJar = null
 			res.json({
 				status: "success"
 			})
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})

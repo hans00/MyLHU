@@ -96,7 +96,7 @@ export default {
             })
             .then((result) => {
                 $("#captcha").attr("placeholder","")
-                vue.captcha = result.text.replace("\n\n","").replace(" ","")
+                vue.captcha = result.text.replace(/\s+/g,"")
             })
         }
     }

@@ -4,7 +4,7 @@
         <p class="lead">
             教學問券填寫
         </p>
-        <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <div class="col-lg-6">
             <div class="list-group" id="inqs">
                 <a class="list-group-item list-group-item-info">

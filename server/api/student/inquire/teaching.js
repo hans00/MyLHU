@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import cheerio from 'cheerio'
 import cookieJar from '../../../lib/cookieJar'
-import request from 'request'
+import r from '../../../lib/backRequest'
 import md5 from 'md5'
 
 export default (urls) => {
@@ -10,23 +10,16 @@ export default (urls) => {
 	teaching.get('/get', (req, res) => {
 		const find_data = /'([\w]+)' *, *'([\w+\$\d]+)'/;
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.student.inquire.teaching.login,
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
+		r.get(urls.student.inquire.teaching.login, cookie.jar)
+		.then(($) => {
 			if (!req.session.teaching) {
 				req.session.teaching = {}
 			}
 			var list = {}
-			var $ = cheerio.load(body)
 			var table = $("td a").parent().parent().parent()
 			if (table.length > 0) {
 				var n = 0
-				table.each(function(i, e) {
+				table.each((i, e) => {
 					var text = $(this).find('td font')
 					if (text.length) {
 						var _class = $(text[0]).text()
@@ -52,7 +45,6 @@ export default (urls) => {
 						}
 					}
 					if (i == table.length-1) {
-						console.log(req.session)
 						res.json({
 							status: 'success',
 							list: list
@@ -66,15 +58,14 @@ export default (urls) => {
 				})
 			}
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
 
 	teaching.post('/fill', (req, res) => {
-		console.log(req.session.teaching)
 		if (!req.session.teaching || !req.session.teaching[req.body.id] || !req.body.myscore || !req.body.tscore) {
 			res.json({
 				status: 'faild',
@@ -91,19 +82,10 @@ export default (urls) => {
 			my_score[1] = 1
 		}
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.student.inquire.teaching.index,
-				jar: cookie.jar
-			})
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
-			body = ""
-			request.post({
-					url: urls.student.inquire.teaching.index,
+		r.get(urls.student.inquire.teaching.index, cookie.jar)
+		.then(($) => {
+			r.post(urls.student.inquire.teaching.index, cookie.jar, {
 					headers: { "Referer": urls.student.inquire.teaching.index },
-					jar: cookie.jar,
 					form: {
 						__VIEWSTATE: $("input[name=__VIEWSTATE]").val(),
 						__VIEWSTATEGENERATOR: $("input[name=__VIEWSTATEGENERATOR]").val(),
@@ -112,11 +94,7 @@ export default (urls) => {
 						__EVENTARGUMENT: now[1]
 					}
 				})
-			.on('response', () => cookie.save())
-			.on('data', (data) => body += data)
-			.on('end', () => {
-				var $ = cheerio.load(body)
-				body = ""
+			.then(($) => {
 				var sent = {
 					__VIEWSTATE: $("input[name=__VIEWSTATE]").val(),
 					__VIEWSTATEGENERATOR: $("input[name=__VIEWSTATEGENERATOR]").val(),
@@ -128,43 +106,42 @@ export default (urls) => {
 					RBL_S1: my_score[0],
 					RBL_S2: my_score[1]
 				}
-				var p = Promise.resolve();
-				$("input[id^=GridView][value="+req.body.tscore+"]").each(function(i, e){
-					p = p.then(function(){ 
+				var p = Promise.resolve()
+				$("input[id^=GridView][value="+req.body.tscore+"]").each((i, e) => {
+					p = p.then(() => {
 						sent[$(e).attr('name')] = $(e).val()
-					});
-				});
-				p.then(function(){
-					request.post({
-							url: urls.student.inquire.teaching.base +
-								 $("form[name=Question]").attr('action'),
+					})
+				})
+				p.then(() => {
+					let action_url = $("form[name=Question]").attr('action')
+					r.post(
+						urls.student.inquire.teaching.base + action_url,
+						cookie.jar,
+						{
 							headers: { "Referer": urls.student.inquire.teaching.index },
-							jar: cookie.jar,
 							form: sent
-						})
-					.on('response', () => cookie.save())
-					.on('data', (data) => body += data)
-					.on('end', () => {
+						}
+					).then(($) => {
 						res.json({
 							status: 'success'
 						})
 					})
-					.on('error', (err) => {
+					.catch((err) => {
 						res.json({
-							status: 'faild'
+							status: 'conn_faild'
 						})
 					})
 				})
 			})
-			.on('error', (err) => {
+			.catch((err) => {
 				res.json({
-					status: 'faild'
+					status: 'conn_faild'
 				})
 			})
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
