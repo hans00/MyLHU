@@ -118,12 +118,12 @@ function pdfParserPromise(data) {
 	return promise
 }
 
-exports default class {
-	schedule: null,
+export default class {
 	constructor (pdf_url, cache_path) {
+		this.schedule = null
 		let expire_day = 24*60*60*1000 * 10 //days
 		if (fs.existsSync(cache_path)) {
-			import schedule from cache_path
+			let schedule = require(cache_path)
 			if (new Date(schedule.cache_time+expire_day) < new Date()) {
 				this.schedule = schedule
 			}

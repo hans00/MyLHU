@@ -9,6 +9,22 @@ import history from 'connect-history-api-fallback'
 
 let MemoryStore = sess_store(session)
 let app = express()
+const port = process.env.PORT || 3000
+
+if (process.env.NODE_ENV !== 'production') {
+    const webpack = require('webpack')
+    const config = require('../config/dev.webpack.config')
+    const compiler = webpack(config)
+
+    app.use(require('webpack-dev-middleware')(compiler, {
+        publicPath: config.output.publicPath,
+        stats: {
+            colors: true,
+        },
+    }))
+
+    app.use(require('webpack-hot-middleware')(compiler))
+}
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -40,8 +56,8 @@ app.use(history({
 
 app.use(express.static('assets'))
 
-app.listen((process.env.PORT || 3000), function () {
-    console.log('Listening on port 3000!');
+app.listen(port, function () {
+    console.log(`Listening on ${port}!`);
 })
 
 export default app

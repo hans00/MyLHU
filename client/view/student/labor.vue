@@ -50,10 +50,11 @@
 
 <script>
 import auth from '../../auth'
+import error_code from '../../error_code.json'
 export default {
     data ()  {
         return {
-            user: auth.user,
+            user: auth.user_data,
             start: false,
             interval: 1,
             list: {},
@@ -154,16 +155,7 @@ export default {
         }
     },
     mounted () {
-        if (auth.user.logged) {
-            auth.student((status) => {
-                this.$root.checking = false
-                if (!status) {
-                    $('#error').modal('show')
-                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
-                }
-            })
-            this.setup()
-        } else {
+        if (!auth.user_data.logged) {
             this.$router.push('/')
         }
     },

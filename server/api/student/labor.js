@@ -9,7 +9,7 @@ export default (urls) => {
 
 	labor.get('/list', (req, res) => {
 		var cookie = new cookieJar(req)
-		r.get(urls.student.labor.list, cookie.jar)
+		r.get(urls.student.labor.list, cookie)
 		.then(($) => {
 			if (!req.session.labor) {
 				req.session.labor = {}
@@ -40,7 +40,7 @@ export default (urls) => {
 								got: false
 							}
 						}
-					}
+					})
 				})
 				p.then(() => {
 					var output = {
@@ -76,7 +76,7 @@ export default (urls) => {
 		}
 		var now = req.session.labor[req.body.id]
 		var cookie = new cookieJar(req)
-		r.post(now.url, cookie.jar, {
+		r.post(now.url, cookie, {
 			form: now.post
 		})
 		.then(($) => {

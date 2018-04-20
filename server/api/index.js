@@ -1,7 +1,6 @@
 import { version } from '../../package.json'
 import { Router } from 'express'
 import querystring from 'querystring'
-import cheerio from 'cheerio'
 import cookieJar from '../lib/cookieJar'
 import r from '../lib/backRequest'
 import student from './student'
@@ -15,9 +14,9 @@ export default (urls) => {
 		res.json({ version })
 	})
 
-	api.get('/login/check', (req, res) => {
+	api.get('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		r.get(urls.imoving.login, cookie.jar)
+		r.get(urls.imoving.login, cookie)
 		.then(($) => {
 			var login = $('[name="登入"]')
 			res.json({
@@ -34,14 +33,12 @@ export default (urls) => {
 
 	api.post('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		r.post(urls.imoving.login, cookie.jar, {
-			form: {
-				authority: "lhu",
-				nativeApp: "true",
-				loginUser: req.body.account,
-				loginPassword: req.body.password,
-				remainLoggedIn: "true"
-			}
+		r.post(urls.imoving.login, cookie, {
+			authority: "lhu",
+			nativeApp: "true",
+			loginUser: req.body.account,
+			loginPassword: req.body.password,
+			remainLoggedIn: "true"
 		})
 		.then(($) => {
 			if ($("*:contains('登入出現問題')").length > 0) {
@@ -51,6 +48,10 @@ export default (urls) => {
 				})
 			} else {
 				let token = crypto.randomBytes(128).toString('hex')
+				req.session.account = {
+					id: req.body.account,
+					pw: req.body.password
+				}
 				res.json({
 					status: 'success',
 					logged: true,
@@ -67,9 +68,10 @@ export default (urls) => {
 
 	api.get('/logout', (req, res) => {
 		var cookie = new cookieJar(req)
-		request.get(urls.imoving.logout, cookie.jar)
+		r.get(urls.imoving.logout, cookie)
 		.then(($) => {
 			req.session.loggedJar = null
+			req.session.account   = null
 			res.json({
 				status: "success"
 			})

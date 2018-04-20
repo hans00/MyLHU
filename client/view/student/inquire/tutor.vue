@@ -5,15 +5,19 @@
             導師問券填寫
         </p>
         <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
-        <form  v-on:submit.prevent="submit">
+        <form  v-on:submit.prevent="submit" v-if="available">
             <div class="form-group">
                 <label for="score">您想給班導多少分呢？</label>
                 <span v-html="score" class="badge"></span><br>
                 <input class="slider" id="score" v-model="score" type="text" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="5"/>
             </div>
             <button class="btn btn-primary" type="submit">送出</button>
+            <br>
+            <h3 v-html="result"></h3>
         </form>
-        <h3 v-html="result"></h3>
+        <p class="lead" v-else>
+            目前尚未開放或您已填寫。
+        </p>
     </div>
     <div v-else>
         <h1>歡迎使用 My LHU</h1>
@@ -26,11 +30,13 @@
 
 <script>
 import auth from '../../../auth'
+import error_code from '../../../error_code.json'
 import Slider from 'bootstrap-slider'
 export default {
     data ()  {
         return {
-            user: auth.user,
+            available: true,
+            user: auth.user_data,
             result: ""
         }
     },
@@ -38,17 +44,9 @@ export default {
         submit () {
             var t = this
             this.$root.checking = true
-            fetch('/api/student/inquire/tutor/fill', {
-                credentials: 'same-origin',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    score: t.score
-                })
+            auth.post('/student/inquire/tutor/fill', {
+                score: t.score
             })
-            .then((response) => { return response.json() })
             .then((json) => {
                 this.$root.checking = false
                 if (json.status == "success") {
@@ -59,18 +57,31 @@ export default {
             })
         }
     },
+    watch: {
+        available() {
+            if (this.available) {
+                this.$nextTick(() => new Slider('.slider'))
+            }
+        }
+    },
     mounted () {
-        if (auth.user.logged) {
-            auth.student((status) => {
-                this.$root.checking = false
-                if (!status) {
-                    $('#error').modal('show')
-                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
-                }
-            })
-            this.slide = new Slider("input.slider")
-        } else {
+        if (!auth.user_data.logged) {
             this.$router.push('/')
+        } else {
+            this.$root.checking = true
+            auth.get('/student/inquire/tutor/check')
+            .then((json) => {
+                if (json.status != 'success') {
+                    throw "cannot_conn_school"
+                }
+                this.$root.checking = false
+                this.available = json.available
+            })
+            .catch((status) => {
+                this.$root.checking = false
+                $('#error').modal('show')
+                $('#error #msg').text(error_code[status])
+            })
         }
     },
     destroyed () {

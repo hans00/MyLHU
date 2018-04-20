@@ -1,23 +1,30 @@
 import Vue from 'vue'
 
-export default {
+const auth = {
 	user_data: {
 		logged:  false,
 		student: false,
 		course:  false,
-		auto_refresh: {}
+	},
+	auto_refresh: {},
+	get (api_path) {
+		return Vue.http.get('/api' + api_path)
+		.then((response) => response.json())
+	},
+	post (api_path, data) {
+		return Vue.http.post('/api' + api_path, data)
+		.then((response) => response.json())
 	},
 	student: {
 		check () {
-			let _this = this
-			this.get('/student/check')
-			.then((response) => response.json())
+			const student = this
+			return auth.get('/student/check')
 			.then((json) => {
 				if (json.status == "success") {
 					if (json.logged) {
-						_this.user.student = true
+						auth.user_data.student = true
 					} else {
-						_this.student_login(cb)
+						student.login()
 					}
 				} else {
 					throw "cannot_conn_school"
@@ -25,12 +32,10 @@ export default {
 			})
 		},
 		login () {
-			let user_data = this.user_data
-			this.get('/student/login')
-			.then((response) => response.json())
+			return auth.get('/student/login')
 			.then((json) => {
 				if (json.status == "success") {
-					user_data.student = json.logged
+					auth.user_data.student = json.logged
 				} else {
 					throw "cannot_conn_school"
 				}
@@ -38,13 +43,12 @@ export default {
 		}
 	},
 	check () {
-		let _this = this
-		this.get('/login/check')
+		return auth.get('/login')
 		.then((json) => {
 			if (json.status == "success") {
-				_this.user_data.logged = json.logged
+				auth.user_data.logged = json.logged
 				if (json.logged) {
-					_this.student_check()
+					auth.student.check()
 				}
 			} else {
 				throw "cannot_conn_school"
@@ -52,16 +56,15 @@ export default {
 		})
 	},
 	login (account, password) {
-		var user_data = this.user_data
-		this.post('/login', {
+		return auth.post('/login', {
 			account: account,
 			password: password
 		})
 		.then((json) => {
 			if (json.status == "success") {
-				user_data.logged = json.logged
+				auth.user_data.logged = json.logged
 				if (json.logged) {
-					_this.student.login()
+					auth.student.login()
 				}
 			} else {
 				throw "cannot_conn_school"
@@ -69,24 +72,28 @@ export default {
 		})
 	},
 	logout () {
-		var user = this.user
-		this.get('/logout')
+		return auth.get('/logout')
 		.then((json) => {
 			if (json.status == "success") {
-				user.logged  = false
-				user.student = false
-				user.course  = false
+				auth.user_data.logged  = false
+				auth.user_data.student = false
+				auth.user_data.course  = false
 			} else {
 				throw "cannot_conn_school"
 			}
 		})
 	},
-	get (api_path) {
-		Vue.http.get('/api' + api_path)
-		.then((response) => response.json())
+	register_auto_update() {
+		if (!auth.auto_refresh['basic']) {
+			auth.auto_refresh['basic'] = setInterval(auth.check, 1000)
+		}
 	},
-	post (api_path, data) {
-		Vue.http.post('/api' + api_path, data)
-		.then((response) => response.json())
-	}
+	clear_auto_update() {
+		if (auth.auto_refresh['basic']) {
+			clearInterval(auth.auto_refresh['basic'])
+			auth.auto_refresh['basic'] = null
+		}
+	},
 }
+
+export default auth
