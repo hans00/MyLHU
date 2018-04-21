@@ -1,4 +1,5 @@
 {
+    "schedule": "http://www.lhu.edu.tw/schedule/schedule.pdf",
     "eportal" : {
         "index"  : "http://eportal.lhu.edu.tw/index.do",
         "main"   : "http://eportal.lhu.edu.tw/myPortal.do",
@@ -6,6 +7,11 @@
         "logout" : "http://eportal.lhu.edu.tw/logout.do",
         "captcha": "http://eportal.lhu.edu.tw/authImage.do",
         "std_sso": "http://eportal.lhu.edu.tw/ssoIndex.do?&apOu=StudAp_S&sso=true"
+    },
+    "imoving" : {
+        "check"  : "https://imoving.lhu.edu.tw/login/login?authority=lhu",
+        "login"  : "https://imoving.lhu.edu.tw/login/login?authority=lhu",
+        "logout" : "https://imoving.lhu.edu.tw/login/logout?authority=lhu"
     },
     "student" : {
         "check" : "http://www.lhu.edu.tw/StudAp/LoginMsg.aspx",

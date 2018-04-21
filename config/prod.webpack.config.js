@@ -49,7 +49,8 @@ var config = {
     resolve: {
         extensions: ['', '.js', '.vue'],
         alias: {
-            vue: 'vue/dist/vue.min'
+            vue: 'vue/dist/vue.min',
+            "pinyin-engine/tw": "pinyin-engine/dist/tw"
         }
     },
     node: {

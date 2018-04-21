@@ -1,9 +1,10 @@
-import { version } from '../../package.json'
 import { Router } from 'express'
 import querystring from 'querystring'
-import cheerio from 'cheerio'
+import crypto from 'crypto'
+import { version } from '../../package.json'
 import cookieJar from '../lib/cookieJar'
-import request from 'request'
+import r from '../lib/backRequest'
+import schedule from './schedule'
 import student from './student'
 import course from './course'
 
@@ -14,105 +15,76 @@ export default (urls) => {
 		res.json({ version })
 	})
 
-	api.get('/login/check', (req, res) => {
+	api.get('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.eportal.main,
-				headers: { "Referer": urls.eportal.main },
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var input = cheerio.load(body)('input#muid[type="hidden"]')
-			if (input.length > 0 && input.val() != '') {
-				res.json({
-					status: 'success',
-					logged: true
-				})
-			} else {
-				res.json({
-					status: 'success',
-					logged: false
-				})
-			}
-		})
-		.on('error', (err) => {
+		r.get(urls.imoving.login, cookie)
+		.then(($) => {
+			var login = $('[name="登入"]')
 			res.json({
-				status: 'faild'
+				status: 'success',
+				logged: (login.length == 0)
 			})
 		})
-	})
-
-	api.get('/login/image', (req, res) => {
-		var cookie = new cookieJar(req)
-		request.get({
-			url: urls.eportal.captcha,
-			jar: cookie.jar
+		.catch((err) => {
+			res.json({
+				status: 'conn_faild'
+			})
 		})
-		.on('response', () => cookie.save())
-		.on('error', (err) => {
-			res.send()
-		})
-		.pipe(res)
 	})
 
 	api.post('/login', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.post({
-				url: urls.eportal.login,
-				headers: { "Referer": urls.eportal.index },
-				jar: cookie.jar,
-				form: req.body
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
-			if ($("*:contains('錯誤')").length > 0) {
+		r.post(urls.imoving.login, cookie, {
+			authority: "lhu",
+			nativeApp: "true",
+			loginUser: req.body.account,
+			loginPassword: req.body.password,
+			remainLoggedIn: "true"
+		})
+		.then(($) => {
+			if ($("*:contains('登入出現問題')").length > 0) {
 				res.json({
 					status: 'success',
 					logged: false
 				})
 			} else {
+				let token = crypto.randomBytes(128).toString('hex')
+				req.session.account = {
+					id: req.body.account,
+					pw: req.body.password
+				}
 				res.json({
 					status: 'success',
-					logged: true
+					logged: true,
+					token:  token
 				})
 			}
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
 
 	api.get('/logout', (req, res) => {
 		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.eportal.logout,
-				headers: { "Referer": urls.eportal.main },
-				jar: cookie.jar
-			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
+		r.get(urls.imoving.logout, cookie)
+		.then(($) => {
 			req.session.loggedJar = null
+			req.session.account   = null
 			res.json({
 				status: "success"
 			})
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
 
+	api.use('/schedule', schedule(urls))
 	api.use('/student', student(urls))
 	api.use('/course', course(urls))
 

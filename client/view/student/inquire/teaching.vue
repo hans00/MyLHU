@@ -4,7 +4,7 @@
         <p class="lead">
             教學問券填寫
         </p>
-        <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <div class="col-lg-6">
             <div class="list-group" id="inqs">
                 <a class="list-group-item list-group-item-info">
@@ -64,11 +64,11 @@
 
 <script>
 import auth from '../../../auth'
-import Slider from 'bootstrap-slider'
+import error_code from '../../../error_code.json'
 export default {
     data ()  {
         return {
-            user: auth.user,
+            user: auth.user_data,
             list: [],
             selected: '',
             result: '',
@@ -89,7 +89,6 @@ export default {
             }
         },
         submit () {
-            var t = this
             this.$root.checking = true
             fetch('/api/student/inquire/teaching/fill', {
                 credentials: 'same-origin',
@@ -98,20 +97,21 @@ export default {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    id: t.selected,
-                    myscore: t.myscore,
-                    tscore: t.tscore
+                    id: this.selected,
+                    myscore: this.myscore,
+                    tscore: this.tscore
                 })
             })
             .then((response) => { return response.json() })
             .then((json) => {
                 this.$root.checking = false
                 if (json.status == "success") {
-                    t.result = "成功送出。"
-                    t.list[t.selected].avaiable = false
-                    t.selected = ''
+                    let i = this.list.findIndex(i => i.id == t.selected)
+                    this.result = "成功送出。"
+                    this.list[i].avaiable = false
+                    this.selected = ''
                 } else {
-                    t.result = "失敗！！"
+                    this.result = "失敗！！"
                 }
             })
         },
@@ -133,17 +133,10 @@ export default {
         }
     },
     mounted () {
-        if (auth.user.logged) {
-            auth.student((status) => {
-                this.$root.checking = false
-                if (!status) {
-                    $('#error').modal('show')
-                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
-                }
-            })
-            this.getList()
-        } else {
+        if (!auth.user_data.logged) {
             this.$router.push('/')
+        } else {
+            this.getList()
         }
     },
     destroyed () {

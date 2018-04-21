@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import cookieJar from '../lib/cookieJar'
-import request from 'request'
+import r from '../lib/backRequest'
 
 export default (urls) => {
 	let course = Router()

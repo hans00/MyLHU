@@ -5,7 +5,7 @@
             搶勞作！！！<br>
             目前功能僅無差別搶勞作（不搶限xx系專用勞作），若需取消報名請回到學生資訊系統操作。
         </p>
-        <router-link to="/student" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
+        <router-link to="/" class="btn btn-info"><span class="glyphicon glyphicon-arrow-left"></span> 回上一層</router-link><br><br>
         <form class="form-inline">
             <div class="form-group">
                 <label for="start" class="sr-only control-label">啟動</label>
@@ -50,10 +50,11 @@
 
 <script>
 import auth from '../../auth'
+import error_code from '../../error_code.json'
 export default {
     data ()  {
         return {
-            user: auth.user,
+            user: auth.user_data,
             start: false,
             interval: 1,
             list: {},
@@ -154,16 +155,7 @@ export default {
         }
     },
     mounted () {
-        if (auth.user.logged) {
-            auth.student((status) => {
-                this.$root.checking = false
-                if (!status) {
-                    $('#error').modal('show')
-                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
-                }
-            })
-            this.setup()
-        } else {
+        if (!auth.user_data.logged) {
             this.$router.push('/')
         }
     },

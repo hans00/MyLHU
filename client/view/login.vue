@@ -18,7 +18,7 @@
                         <input type="password" autocomplete="off" placeholder="請輸入您龍華資訊入口之密碼" class="form-control" v-model="password" id="password" required>
                     </div>
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="captcha" class="col-sm-2 control-label">驗證碼</label>
                     <div class="col-sm-10">
                         <div class="input-group">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <button class="btn btn-primary" type="submit">登入</button>
             </form>
         </div>
@@ -52,51 +52,37 @@
 
 <script>
 import Vue from 'vue'
+import error_code from '../error_code.json'
 import auth from '../auth'
 export default {
     data () {
         return {
-            user: auth.user,
-            captchaImg: '/api/login/image?' + (new Date()).getTime(),
-            captcha: ""
+            user: auth.user_data,
         }
     },
     methods: {
         submit () {
-            if (!this.account || !this.password || !this.captcha) {
+            if (!this.account || !this.password) {
                 return
             }
             this.$root.checking = true
-            auth.login(this.account, this.password, this.captcha, (status) => {
+            auth.login(this.account, this.password)
+            .then(() => {
                 this.$root.checking = false
-                if (status) {
-                    if (auth.user.logged) {
-                        this.$router.push('/')
-                    } else {
-                        this.account = this.password = this.captcha = ""
-                        this.refresh()
-                        $('#error').modal('show')
-                        $('#error #msg').text("輸入的資料有誤，請再檢查。")
-                    }
+                if (auth.user_data.logged) {
+                    auth.register_auto_update()
+                    this.$router.push('/')
                 } else {
+                    this.account = this.password = ""
+                    this.refresh()
                     $('#error').modal('show')
-                    $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
+                    $('#error #msg').text("輸入的資料有誤，請再檢查。")
                 }
             })
-        },
-        refresh () {
-            this.captcha = ""
-            this.captchaImg = '/api/login/image?' + (new Date()).getTime()
-        },
-        autoFill() {
-            $("#captcha").attr("placeholder","分析中")
-            let vue = this
-            Tesseract.recognize(document.getElementById("captchaImg"), {
-                tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-            })
-            .then((result) => {
-                $("#captcha").attr("placeholder","")
-                vue.captcha = result.text.replace("\n\n","").replace(" ","")
+            .catch((status) => {
+                this.$root.checking = false
+                $('#error').modal('show')
+                $('#error #msg').text(error_code[status])
             })
         }
     }

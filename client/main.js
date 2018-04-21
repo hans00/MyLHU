@@ -2,40 +2,41 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
 import auth from './auth'
+import error_code from './error_code.json'
 
 Vue.use(VueResource)
 
 const app = new Vue({
     data ()  {
-        return { user: auth.user, checking: true }
+        return { user: auth.user_data, checking: false }
     },
     methods: {
         logout () {
+            auth.clear_auto_update()
             this.checking = true
-            auth.logout((status) => {
+            auth.logout()
+            .then((status) => {
                 this.$root.checking = false
                 this.$router.push('/')
             })
         }
     },
     mounted () {
-        auth.check((status) => {
+        auth.check()
+        .then(() => {
             this.$root.checking = false
-            if (!status) {
-                $('#error').modal('show')
-                $('#error #msg').text("無法連線至龍華伺服器，請稍後再試。")
+            if (auth.user_data.logged) {
+                auth.register_auto_update()
             }
-            if (auth.user.logged) {
-                this.handle = setInterval(() => {
-                    auth.check()
-                }, 1000)
-            }
+        })
+        .catch((status) => {
+            this.$root.checking = false
+            $('#error').modal('show')
+            $('#error #msg').text(error_code[status])
         })
     },
     destroyed () {
-        if (this.handle) {
-            clearInterval(this.handle)
-        }
+        auth.clear_auto_update()
     },
     router
 }).$mount('#app')

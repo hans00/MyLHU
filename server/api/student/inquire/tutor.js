@@ -1,60 +1,59 @@
 import { Router } from 'express'
-import cheerio from 'cheerio'
 import cookieJar from '../../../lib/cookieJar'
-import request from 'request'
+import r from '../../../lib/backRequest'
 import md5 from 'md5'
 
 export default (urls) => {
 	let tutor = Router()
 
-	tutor.post('/fill', (req, res) => {
-		var cookie = new cookieJar(req)
-		var body = ""
-		request.get({
-				url: urls.student.inquire.tutor.login,
-				jar: cookie.jar
+	tutor.get('/check', (req, res) => {
+		let cookie = new cookieJar(req)
+		r.get(urls.student.inquire.tutor.login, cookie)
+		.then(($) => {
+			let available = $("*:contains('確定送出')").length > 0
+			res.json({
+				status: 'success',
+				available: available
 			})
-		.on('response', () => cookie.save())
-		.on('data', (data) => body += data)
-		.on('end', () => {
-			var $ = cheerio.load(body)
-			body = ""
-			var sent = {
+		})
+		.catch((err) => {
+			res.json({
+				status: 'conn_faild'
+			})
+		})
+	})
+
+	tutor.post('/fill', (req, res) => {
+		let cookie = new cookieJar(req)
+		r.get(urls.student.inquire.tutor.login, cookie)
+		.then(($) => {
+			let sent = {
 				__VIEWSTATE: $("input[name=__VIEWSTATE]").val(),
 				__VIEWSTATEGENERATOR: $("input[name=__VIEWSTATEGENERATOR]").val(),
 				__EVENTVALIDATION: $("input[name=__EVENTVALIDATION]").val(),
 				Btn_Save: "確定送出"
 			}
-			var p = Promise.resolve();
-			$("input[id^=GridView][value="+req.body.score+"]").each(function(i, e){
-				p = p.then(function(){ 
+			let p = Promise.resolve()
+			$("input[id^=GridView][value="+req.body.score+"]").each((i, e) => {
+				p = p.then(() => { 
 					sent[$(e).attr('name')] = $(e).val()
-				});
-			});
-			p.then(function(){
-				request.post({
-						url: urls.student.inquire.tutor.index,
+				})
+			})
+			p.then(() => {
+				r.post(urls.student.inquire.tutor.index, cookie, {
 						headers: { "Referer": urls.student.inquire.tutor.index },
-						jar: cookie.jar,
 						form: sent
 					})
-				.on('response', () => cookie.save())
-				.on('data', (data) => body += data)
-				.on('end', () => {
+				.then(($) => {
 					res.json({
 						status: 'success'
 					})
 				})
-				.on('error', (err) => {
-					res.json({
-						status: 'faild'
-					})
-				})
 			})
 		})
-		.on('error', (err) => {
+		.catch((err) => {
 			res.json({
-				status: 'faild'
+				status: 'conn_faild'
 			})
 		})
 	})
