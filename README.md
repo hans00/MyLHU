@@ -17,12 +17,15 @@ The system for LHU student.
 
 ## Any problen?
 
-如果有 Bug 請於 GitHub Issue 通知或自行 PR。（有任何想要新增的功能也是
+如果有 Bug 請於 GitHub Issue 通知或自行改 code 並 PR。（有任何想要新增的功能也是
 
-## Features
+## Road Map
 
+- [x] 免 CAPTCHA 登入（免透過 eportal 站點登入的黑魔法）
 - [x] 搶勞作
     - [x] 無差別
     - [ ] 選擇性
 - [x] 問卷
 - [ ] 選課
+- [x] API
+	- [ ] API Token (for public usage)

@@ -2,10 +2,11 @@ import express from 'express'
 import session from 'express-session'
 import bodyParser from 'body-parser'
 import crypto from 'crypto'
-import api from './api'
-import urls from '../urls.json'
 import sess_store from 'session-memory-store'
 import history from 'connect-history-api-fallback'
+import api from './api'
+import urls from '../urls.json'
+import Schedule from './lib/schedule'
 
 let MemoryStore = sess_store(session)
 let app = express()
@@ -25,6 +26,9 @@ if (process.env.NODE_ENV !== 'production') {
 
     app.use(require('webpack-hot-middleware')(compiler))
 }
+
+const cachePath = "/tmp/schedule.cache.json"
+const schedule = new Schedule(urls.schedule, cachePath)
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -60,4 +64,4 @@ app.listen(port, function () {
     console.log(`Listening on ${port}!`);
 })
 
-export default app
+export {app, schedule}

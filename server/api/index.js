@@ -1,11 +1,12 @@
-import { version } from '../../package.json'
 import { Router } from 'express'
 import querystring from 'querystring'
+import crypto from 'crypto'
+import { version } from '../../package.json'
 import cookieJar from '../lib/cookieJar'
 import r from '../lib/backRequest'
+import schedule from './schedule'
 import student from './student'
 import course from './course'
-import crypto from 'crypto'
 
 export default (urls) => {
 	let api = Router();
@@ -83,6 +84,7 @@ export default (urls) => {
 		})
 	})
 
+	api.use('/schedule', schedule(urls))
 	api.use('/student', student(urls))
 	api.use('/course', course(urls))
 

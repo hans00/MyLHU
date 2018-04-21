@@ -1,4 +1,5 @@
 {
+    "schedule": "http://www.lhu.edu.tw/schedule/schedule.pdf",
     "eportal" : {
         "index"  : "http://eportal.lhu.edu.tw/index.do",
         "main"   : "http://eportal.lhu.edu.tw/myPortal.do",
