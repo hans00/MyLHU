@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="user.student">
+    <div v-if="user.logged">
         <h1>歡迎使用 My LHU</h1>
         <p class="lead">
             導師問券填寫
@@ -35,7 +35,7 @@ import Slider from 'bootstrap-slider'
 export default {
     data ()  {
         return {
-            available: true,
+            available: false,
             user: auth.user_data,
             result: ""
         }
@@ -65,23 +65,16 @@ export default {
         }
     },
     mounted () {
-        if (!auth.user_data.logged) {
-            this.$router.push('/')
-        } else {
+        if (auth.user_data.logged) {
             this.$root.checking = true
             auth.get('/student/inquire/tutor/check')
             .then((json) => {
-                if (json.status != 'success') {
-                    throw "cannot_conn_school"
-                }
                 this.$root.checking = false
                 this.available = json.available
             })
-            .catch((status) => {
-                this.$root.checking = false
-                $('#error').modal('show')
-                $('#error #msg').text(error_code[status])
-            })
+            .catch(code => this.$root.error(code))
+        } else {
+            this.$router.push('/')
         }
     },
     destroyed () {

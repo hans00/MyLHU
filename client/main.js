@@ -19,9 +19,20 @@ const app = new Vue({
                 this.$root.checking = false
                 this.$router.push('/')
             })
+        },
+        error (code) {
+            this.checking = false
+            $('#error').modal('show')
+            if (error_code[code]) {
+                $('#error #msg').text(error_code[code])
+            } else {
+                $('#error #msg').text(error_code['unknown'])
+            }
+            $('#error #code').text(code)
         }
     },
-    mounted () {
+    created () {
+        this.checking = true
         auth.check()
         .then(() => {
             this.$root.checking = false
@@ -29,11 +40,7 @@ const app = new Vue({
                 auth.register_auto_update()
             }
         })
-        .catch((status) => {
-            this.$root.checking = false
-            $('#error').modal('show')
-            $('#error #msg').text(error_code[status])
-        })
+        .catch((code) => this.error(code))
     },
     destroyed () {
         auth.clear_auto_update()

@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="user.student">
+    <div v-if="user.logged">
         <h1>歡迎使用 My LHU</h1>
         <p class="lead">
             教學問券填寫
@@ -89,54 +89,45 @@ export default {
             }
         },
         submit () {
+            const that = this
             this.$root.checking = true
-            fetch('/api/student/inquire/teaching/fill', {
-                credentials: 'same-origin',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: this.selected,
-                    myscore: this.myscore,
-                    tscore: this.tscore
-                })
+            auth.post('/student/inquire/teaching/fill', {
+                id: this.selected,
+                myscore: this.myscore,
+                tscore: this.tscore
             })
-            .then((response) => { return response.json() })
             .then((json) => {
                 this.$root.checking = false
-                if (json.status == "success") {
-                    let i = this.list.findIndex(i => i.id == t.selected)
-                    this.result = "成功送出。"
-                    this.list[i].avaiable = false
-                    this.selected = ''
-                } else {
-                    this.result = "失敗！！"
-                }
+                let i = this.list.findIndex(i => i.id == that.selected)
+                this.result = "成功送出。"
+                this.list[i].avaiable = false
+                this.selected = ''
+            })
+            .catch(code => {
+                this.$root.error(code)
+                this.result = "失敗！！"
             })
         },
         getList () {
             this.$root.checking = true
-            fetch('/api/student/inquire/teaching/get?' + (new Date()).getTime(), { credentials: 'same-origin' })
-            .then((response) => { return response.json() })
+            auth.get('/student/inquire/teaching/get?' + (new Date()).getTime())
             .then((json) => {
                 this.$root.checking = false
-                if (json.status == "success") {
-                    this.list = []
-                    for (var id in json.list) {
-                        var tmp = json.list[id]
-                        tmp.id = id
-                        this.list.push(tmp)
-                    }
+                this.list = []
+                for (var id in json.list) {
+                    var tmp = json.list[id]
+                    tmp.id = id
+                    this.list.push(tmp)
                 }
             })
+            .catch(code => this.$root.error(code))
         }
     },
     mounted () {
-        if (!auth.user_data.logged) {
-            this.$router.push('/')
-        } else {
+        if (auth.user_data.logged) {
             this.getList()
+        } else {
+            this.$router.push('/')
         }
     },
     destroyed () {

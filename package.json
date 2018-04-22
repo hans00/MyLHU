@@ -58,7 +58,7 @@
   },
   "main": "dist/index.js",
   "name": "mylhu",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Hans Zhang",
   "private": true
 }

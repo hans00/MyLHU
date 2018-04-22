@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="user.student">
+    <div v-if="user.logged">
         <h1>歡迎使用 My LHU</h1>
         <p class="lead">
             搶勞作！！！<br>
@@ -10,9 +10,9 @@
             <div class="form-group">
                 <label for="start" class="sr-only control-label">啟動</label>
                 <label class="toggle">
-		            <input type="checkbox">
-			        <span class="handle" @click="toogle"></span>
-			    </label>
+                    <input type="checkbox">
+                    <span class="handle" @click="toogle"></span>
+                </label>
             </div>
             <div class="form-group">
                 <label for="intervl" class="sr-only control-label">間格</label>
@@ -86,32 +86,24 @@ export default {
             }
         },
         getList () {
-            fetch('/api/student/labor/list?' + (new Date()).getTime(), { credentials: 'same-origin' })
-            .then((response) => { return response.json() })
+            auth.get('/student/labor/list?' + (new Date()).getTime())
             .then((json) => {
-                if (json.status == "success") {
-                    for (var id in json.list) {
-                        if (!(id in this.list)) {
-                            this.list[id] = {
-                                name: json.list[id],
-                                got: false,
-                                running: false
-                            }
+                for (var id in json.list) {
+                    if (!(id in this.list)) {
+                        this.list[id] = {
+                            name: json.list[id],
+                            got: false,
+                            running: false
                         }
                     }
                 }
             })
+            .catch(code => this.$root.error(code))
         },
         getLabor (id) {
-            fetch('/api/student/labor/get?' + (new Date()).getTime(), {
-                credentials: 'same-origin',
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
-            })
-            .then((response) => { return response.json() })
+            auth.post('/student/labor/get?' + (new Date()).getTime(), { id: id })
             .then((json) => {
-                if (json.status == "success" && json.result == "success") {
+                if (json.result == "success") {
                     switch (json.result) {
                         case "available":
                             this.getLabor(id)
@@ -126,6 +118,7 @@ export default {
                 }
                 this.list[id].running = false
             })
+            .catch(code => this.$root.error(code))
         },
         display_faild () {
             var temp = []
@@ -152,11 +145,6 @@ export default {
             } else {
                 this.succ_list = ["何でもない…"]
             }
-        }
-    },
-    mounted () {
-        if (!auth.user_data.logged) {
-            this.$router.push('/')
         }
     },
     destroyed () {

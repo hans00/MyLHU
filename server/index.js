@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import sess_store from 'session-memory-store'
 import history from 'connect-history-api-fallback'
 import api from './api'
-import urls from '../urls.json'
+import urls from './urls.json'
 import Schedule from './lib/schedule'
 
 let MemoryStore = sess_store(session)

@@ -3,56 +3,35 @@ import Vue from 'vue'
 const auth = {
 	user_data: {
 		logged:  false,
-		student: false,
 		course:  false,
 	},
 	auto_refresh: {},
 	get (api_path) {
 		return Vue.http.get('/api' + api_path)
 		.then((response) => response.json())
+		.then((json) => {
+			if (json.status != "success") {
+				throw json.status
+			} else {
+				return json
+			}
+		})
 	},
 	post (api_path, data) {
 		return Vue.http.post('/api' + api_path, data)
 		.then((response) => response.json())
-	},
-	student: {
-		check () {
-			const student = this
-			return auth.get('/student/check')
-			.then((json) => {
-				if (json.status == "success") {
-					if (json.logged) {
-						auth.user_data.student = true
-					} else {
-						student.login()
-					}
-				} else {
-					throw "cannot_conn_school"
-				}
-			})
-		},
-		login () {
-			return auth.get('/student/login')
-			.then((json) => {
-				if (json.status == "success") {
-					auth.user_data.student = json.logged
-				} else {
-					throw "cannot_conn_school"
-				}
-			})
-		}
+		.then((json) => {
+			if (json.status != "success") {
+				throw json.status
+			} else {
+				return json
+			}
+		})
 	},
 	check () {
 		return auth.get('/login')
 		.then((json) => {
-			if (json.status == "success") {
-				auth.user_data.logged = json.logged
-				if (json.logged) {
-					auth.student.check()
-				}
-			} else {
-				throw "cannot_conn_school"
-			}
+			auth.user_data.logged = json.logged
 		})
 	},
 	login (account, password) {
@@ -61,31 +40,20 @@ const auth = {
 			password: password
 		})
 		.then((json) => {
-			if (json.status == "success") {
-				auth.user_data.logged = json.logged
-				if (json.logged) {
-					auth.student.login()
-				}
-			} else {
-				throw "cannot_conn_school"
-			}
+			auth.user_data.logged = json.logged
 		})
 	},
 	logout () {
 		return auth.get('/logout')
 		.then((json) => {
-			if (json.status == "success") {
-				auth.user_data.logged  = false
-				auth.user_data.student = false
-				auth.user_data.course  = false
-			} else {
-				throw "cannot_conn_school"
-			}
+			auth.user_data.logged  = false
+			auth.user_data.student = false
+			auth.user_data.course  = false
 		})
 	},
 	register_auto_update() {
 		if (!auth.auto_refresh['basic']) {
-			auth.auto_refresh['basic'] = setInterval(auth.check, 1000)
+			auth.auto_refresh['basic'] = setInterval(auth.check, 3000)
 		}
 	},
 	clear_auto_update() {

@@ -19,14 +19,12 @@
                     </div>
                 </div>
                 <!-- <div class="form-group">
-                    <label for="captcha" class="col-sm-2 control-label">驗證碼</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <input type="text" autocomplete="off" title="請輸入右方驗證碼圖片之文字" placeholder="請輸入右方驗證碼圖片之文字" class="form-control" v-model="captcha" id="captcha" required>
-                            <div class="input-group-addon input-group-addon-img">
-                                <img :src="captchaImg" @click="refresh" @load="autoFill" id="captchaImg" alt="無法載入驗證碼" title="點我更新驗證碼">
-                            </div>
-                        </div>
+                    <div class="col-sm-12 vcenter">
+                        <label class="toggle">
+                            <input type="checkbox" id="autologin" v-model="autologin">
+                            <span class="handle" @click="toogle"></span>
+                        </label>
+                        <label class="text" for="autologin">自動登入</label>
                     </div>
                 </div> -->
                 <button class="btn btn-primary" type="submit">登入</button>
@@ -41,12 +39,11 @@
 </template>
 
 <style>
-    .input-group-addon-img {
-        padding: 0;
-        overflow-y: hidden;
+    .vcenter > * {
+        vertical-align: middle
     }
-    .input-group-addon-img > img {
-        height: 32px;
+    .text {
+        font-weight: normal;
     }
 </style>
 
@@ -58,9 +55,13 @@ export default {
     data () {
         return {
             user: auth.user_data,
+            // autologin: false
         }
     },
     methods: {
+        // toogle () {
+        //     autologin = !autologin
+        // },
         submit () {
             if (!this.account || !this.password) {
                 return
@@ -74,17 +75,22 @@ export default {
                     this.$router.push('/')
                 } else {
                     this.account = this.password = ""
-                    this.refresh()
-                    $('#error').modal('show')
-                    $('#error #msg').text("輸入的資料有誤，請再檢查。")
+                    this.$root.error('login_faild')
                 }
             })
-            .catch((status) => {
-                this.$root.checking = false
-                $('#error').modal('show')
-                $('#error #msg').text(error_code[status])
+            .catch((code) => {
+                this.$root.error(code)
             })
-        }
-    }
+        },
+    },
+    // watch: {
+    //     autologin () {
+    //         if (this.autologin) {
+    //             if (!confirm("警告：")) {
+    //                 this.autologin = false
+    //             }
+    //         }
+    //     },
+    // }
 }
 </script>

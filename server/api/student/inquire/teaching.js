@@ -46,7 +46,6 @@ export default (urls) => {
 					})
 				})
 				p.then(() => {
-					console.log(req.session.teaching)
 					req.session.save(() => {
 						res.json({
 							status: 'success',

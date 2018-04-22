@@ -37,7 +37,6 @@
 
 <script>
 import auth from '../auth'
-import error_code from '../error_code.json'
 import PinyinEngine from 'pinyin-engine/tw'
 
 export default {
